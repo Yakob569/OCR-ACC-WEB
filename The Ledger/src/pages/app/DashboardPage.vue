@@ -1,21 +1,35 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { getDashboardSummary } from '@/api/ledgerApi'
+import { getDashboardSummary, listGroups } from '@/api/ledgerApi'
 
 const router = useRouter()
 
 const summary = ref(null)
+const recentGroups = ref([])
 const isLoading = ref(false)
 const errorMessage = ref('')
+const isLoadingFallbackGroups = ref(false)
 
 async function load() {
   errorMessage.value = ''
   isLoading.value = true
   try {
     summary.value = await getDashboardSummary()
+    recentGroups.value = Array.isArray(summary.value?.recent_groups) ? summary.value.recent_groups : []
+
+    if (recentGroups.value.length === 0 && (summary.value?.total_groups || 0) > 0) {
+      isLoadingFallbackGroups.value = true
+      try {
+        const groups = await listGroups({ limit: 5, offset: 0 })
+        recentGroups.value = Array.isArray(groups) ? groups : []
+      } finally {
+        isLoadingFallbackGroups.value = false
+      }
+    }
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : 'Failed to load dashboard'
+    recentGroups.value = []
   } finally {
     isLoading.value = false
   }
@@ -65,11 +79,12 @@ onMounted(load)
           <h3>Recent Groups</h3>
           <button class="link" @click="router.push('/app/groups')">View all</button>
         </div>
-        <div v-if="!summary.recent_groups || summary.recent_groups.length === 0" class="muted">
+        <div v-if="isLoadingFallbackGroups" class="muted">Loading groups…</div>
+        <div v-else-if="!recentGroups || recentGroups.length === 0" class="muted">
           No groups yet. Create your first group to start scanning receipts.
         </div>
         <ul v-else class="list">
-          <li v-for="group in summary.recent_groups" :key="group.id" class="row">
+          <li v-for="group in recentGroups" :key="group.id" class="row">
             <div class="name">{{ group.name }}</div>
             <div class="pill">{{ group.status }}</div>
             <button class="smallLink" @click="router.push(`/app/groups/${group.id}`)">Open</button>
