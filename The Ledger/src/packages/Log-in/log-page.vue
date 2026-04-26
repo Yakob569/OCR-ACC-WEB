@@ -1,3 +1,28 @@
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { login } from '@/stores/auth'
+
+const router = useRouter()
+
+const email = ref('')
+const password = ref('')
+const isSubmitting = ref(false)
+const errorMessage = ref('')
+
+async function onSubmit() {
+  errorMessage.value = ''
+  isSubmitting.value = true
+  try {
+    await login({ email: email.value, password: password.value })
+    router.push('/app/dashboard')
+  } catch (error) {
+    errorMessage.value = error instanceof Error ? error.message : 'Login failed'
+  } finally {
+    isSubmitting.value = false
+  }
+}
+</script>
 
 <template>
     <section>
@@ -12,7 +37,7 @@
                 </div>
             </div>
             <div class="sign">
-            <div class="log-form">
+            <form class="log-form" @submit.prevent="onSubmit">
                 <div class="log-text">
                     <h3 style="font-size: 13px; color: #005b51; font-weight: 600;">Secure Gateway</h3>
                     <h2 style="font-weight: bold; font-size: 35px;">Welcome Back</h2>
@@ -20,9 +45,12 @@
                         the atelier.
                     </p>
                 </div>
+                <p v-if="errorMessage" style="color: #ba1a1a; font-size: 13px; font-weight: 600; width: 350px;">
+                  {{ errorMessage }}
+                </p>
                 <div class="log-email">
                   <label style="font-size: 13px; color: #444e4d; font-weight: 600;">Email Address</label>
-                  <input type="email" placeholder="name@firm.com">
+                  <input v-model="email" autocomplete="email" required type="email" placeholder="name@firm.com">
                 </div>
                 <div class="log-Password">
                    <div class="passwor-text">
@@ -30,11 +58,11 @@
                     <p style="font-size: 13px; color:#005b51; font-weight: 600;">Forgot Password?</p>
                    </div>
                    <div class="Password-in">
-                    <input type="Password" placeholder=". . . . . .">
+                    <input v-model="password" autocomplete="current-password" required type="password" placeholder=". . . . . .">
                    </div> 
                 </div>
                 <div class="butn">
-                <button style="padding: 10px 20px; width: 350px; background-color: #005b51; color: white; border: none; border-radius: 6px; font-weight: 700; font-size: 18px; ">Sign in to Ledger</button>
+                <button :disabled="isSubmitting" style="padding: 10px 20px; width: 350px; background-color: #005b51; color: white; border: none; border-radius: 6px; font-weight: 700; font-size: 18px; ">Sign in to Ledger</button>
                 </div>
             <div class="or">
                 <span style="width: 100px; height: 0.5px; background-color: #808584;"></span>
@@ -63,9 +91,9 @@
              </div>
             </div>
             <div class="create">
-                <p style="font-size: 13px; color: #808584;">New to the atelier? <b style="cursor: pointer; color: #005b51; font-weight: 700;">Create Account</b></p>
+                <p style="font-size: 13px; color: #808584;">New to the atelier? <b @click="router.push('/getstarted')" style="cursor: pointer; color: #005b51; font-weight: 700;">Create Account</b></p>
             </div>                
-            </div>
+            </form>
             </div>
            </div> 
         </div>

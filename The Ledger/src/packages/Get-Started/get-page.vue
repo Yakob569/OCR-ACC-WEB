@@ -1,3 +1,36 @@
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { register } from '@/stores/auth'
+
+const router = useRouter()
+
+const fullName = ref('')
+const email = ref('')
+const phone = ref('')
+const password = ref('')
+const isSubmitting = ref(false)
+const errorMessage = ref('')
+
+async function onSubmit() {
+  errorMessage.value = ''
+  isSubmitting.value = true
+  try {
+    await register({
+      email: email.value,
+      password: password.value,
+      fullName: fullName.value,
+      phone: phone.value,
+    })
+    router.push('/app/dashboard')
+  } catch (error) {
+    errorMessage.value = error instanceof Error ? error.message : 'Registration failed'
+  } finally {
+    isSubmitting.value = false
+  }
+}
+</script>
+
 <template>
     <section>
         <div class="design">
@@ -29,28 +62,35 @@
                     <h2>Create Account</h2>
                     <p>Experience the precision of architectural finance.</p>
                 </div>
-                <div class="create-form">
+                <form class="create-form" @submit.prevent="onSubmit">
+                    <p v-if="errorMessage" style="color: #ba1a1a; font-size: 13px; font-weight: 600;">
+                      {{ errorMessage }}
+                    </p>
                     <div class="log">
                         <label for="">FULL NAME</label>
-                        <input type="text" placeholder="Julianne Moore">
+                        <input v-model="fullName" autocomplete="name" required type="text" placeholder="Julianne Moore">
                     </div>
                     <div class="log">
                         <label for="email">EMAIL ADDRESS</label>
-                        <input type="email" placeholder="Julianne@atelier.com">
+                        <input v-model="email" autocomplete="email" required type="email" placeholder="Julianne@atelier.com">
+                    </div>
+                    <div class="log">
+                        <label for="phone">PHONE</label>
+                        <input v-model="phone" autocomplete="tel" required type="tel" placeholder="+251900112233">
                     </div>
                     <div class="log">
                         <label for="password">PASSWORD</label>
-                        <input style="font-weight: bold; " type="password" placeholder=".........">
+                        <input v-model="password" autocomplete="new-password" required style="font-weight: bold; " type="password" placeholder=".........">
                     </div>
                 <div class="identity-button">
-                    <button style="padding: 20px 15px; width: 100%; background-color: #005b51; color: white; border: none; border-radius: 6px; font-weight: 600; font-size: 18px; ">Establish Identity </button>
+                    <button :disabled="isSubmitting" style="padding: 20px 15px; width: 100%; background-color: #005b51; color: white; border: none; border-radius: 6px; font-weight: 600; font-size: 18px; ">Establish Identity </button>
                 </div>
             <div class="or">
                 <span style="width: 150px; height: 1px; background-color: #808584;"></span>
                 <p style="color: #808584; font-size: 12px;">Or continue with</p>
                 <span style="width: 150px; height: 1px; background-color: #808584;"></span>
             </div>                                    
-                </div>
+                </form>
             <div class="app">
              <div class="google">
                 <button style=" width: 150px; padding: 12px 15px; background-color: white; border: 0.5px solid rgba(228, 228, 230, 0.5); border-radius: 6px;">
