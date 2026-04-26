@@ -22,6 +22,11 @@ This folder tracks progress for the web app located at `Documents/Ledger/web/The
   - Group detail: group + image list + multi-upload (`GET /groups/:id`, `GET /groups/:id/images`, `POST /groups/:id/images`)
   - Image detail: metadata + result decode + review/retry
   - Exports: create + history per group
+- Added polish:
+  - Dashboard: fallback recent groups list (if summary has no `recent_groups`)
+  - Group detail: added Results + Exports panels
+  - Image detail: retry only when `ocr_status` is `failed|needs_review`, and better line-items rendering
+  - Exports: clarified “Not ready” when `storage_url` is missing
 
 ## In progress / Next
 
@@ -29,12 +34,11 @@ This folder tracks progress for the web app located at `Documents/Ledger/web/The
 
 - Group detail:
   - pagination for images/results/exports
-  - add results table (`GET /api/v1/groups/:groupId/results`)
+  - results table is added; improve it with better columns (and render more decoded fields)
 - Dashboard:
   - if `recent_groups/recent_images` are empty, fallback to listing groups
 - Image detail:
-  - render line items in a proper table (not JSON dump)
-  - hide “Retry OCR” button unless failed/needs_review
+  - render more known fields nicely (merchant/date/total)
 - Exports:
   - handle `storage_url: null` better (backend might need a download endpoint)
 - Global:
