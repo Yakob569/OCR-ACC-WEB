@@ -1,0 +1,6 @@
+{
+  "name": "The Ledger",
+  "description": "Financial Workspace for monitoring financial ingestion pipelines",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

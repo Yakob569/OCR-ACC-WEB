@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Equilibrium | The Ledger Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Work+Sans:wght@400;500;600&amp;family=Inter:wght@400;500;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#eceeef",
+                    "primary-fixed-dim": "#73d8c7",
+                    "on-tertiary-fixed": "#00201b",
+                    "primary": "#005148",
+                    "on-tertiary-fixed-variant": "#005045",
+                    "tertiary": "#005145",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#90f4e3",
+                    "error": "#ba1a1a",
+                    "surface-variant": "#e1e3e4",
+                    "surface-dim": "#d8dadb",
+                    "outline": "#6e7979",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#d4e4f4",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#86ebda",
+                    "secondary": "#51606d",
+                    "on-secondary-container": "#576673",
+                    "on-background": "#191c1d",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#006b5c",
+                    "surface-container-high": "#e7e8e9",
+                    "on-secondary-fixed-variant": "#394955",
+                    "surface-container-low": "#f2f4f5",
+                    "surface-tint": "#006b5f",
+                    "tertiary-fixed": "#7cf7de",
+                    "surface-bright": "#f8f9fa",
+                    "surface-container-highest": "#e1e3e4",
+                    "inverse-primary": "#73d8c7",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed": "#00201c",
+                    "primary-container": "#006b5f",
+                    "on-tertiary-container": "#72edd4",
+                    "tertiary-fixed-dim": "#5ddbc2",
+                    "on-primary-fixed-variant": "#005047",
+                    "inverse-surface": "#2e3132",
+                    "secondary-fixed-dim": "#b8c8d7",
+                    "on-secondary-fixed": "#0e1d28",
+                    "error-container": "#ffdad6",
+                    "outline-variant": "#bec9c8",
+                    "on-surface": "#191c1d",
+                    "inverse-on-surface": "#eff1f2",
+                    "on-surface-variant": "#3e4948",
+                    "surface": "#f8f9fa",
+                    "secondary-container": "#d4e4f4",
+                    "on-error-container": "#93000a",
+                    "background": "#f8f9fa"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "display": ["Manrope"],
+                    "body": ["Work Sans"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<div class="flex min-h-screen">
+<!-- SideNavBar Component -->
+<aside class="hidden lg:flex flex-col p-4 space-y-2 h-screen w-64 fixed left-0 bg-slate-50 dark:bg-slate-900 tonal-shift bg-slate-100/50 dark:bg-slate-800/50 font-work-sans text-sm font-medium tracking-normal">
+<div class="px-4 py-6 mb-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+<div>
+<h1 class="font-manrope font-bold text-teal-900 dark:text-white uppercase tracking-widest text-xs">Ledger Atelier</h1>
+<p class="text-[10px] text-slate-500 uppercase tracking-tighter">Financial Workspace</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Dashboard Active -->
+<a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-700 text-teal-900 dark:text-teal-100 rounded-lg shadow-sm font-bold transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-teal-700 hover:bg-white/50 dark:hover:bg-slate-800 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span>Ledgers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-teal-700 hover:bg-white/50 dark:hover:bg-slate-800 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">account_tree</span>
+<span>Groups</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-teal-700 hover:bg-white/50 dark:hover:bg-slate-800 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-teal-700 hover:bg-white/50 dark:hover:bg-slate-800 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="pt-4 mt-auto">
+<button class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-primary text-white rounded-xl font-bold shadow-lg hover:opacity-90 transition-all">
+<span class="material-symbols-outlined">add</span>
+<span>New Group</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 lg:ml-64 p-8">
+<!-- TopNavBar (Embedded Style) -->
+<header class="flex justify-between items-center w-full mb-12 h-16">
+<div>
+<h2 class="font-headline font-extrabold text-3xl tracking-tight text-primary">The Ledger</h2>
+<p class="text-sm text-secondary-container font-medium">Monitoring financial ingestion pipelines</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-sm focus:ring-2 focus:ring-primary w-64 transition-all" placeholder="Search entries..." type="text"/>
+</div>
+<button class="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="professional headshot of a financial analyst in a modern office setting with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXnCj6QwesgsKrHVM2OjYwpeUrHTgqkAthHwsRzQhVXloAgwGg-dC8wuik8gI15xRA7YRZJf3IFuF_29PdqnpHe_0081MNLmI3VsnEYMEzr66SYnXz4OcsRZtpwDLe9OAKUQi3ZKte5_kYb5lzS1k_fyWHm2zYjnTBAP_AqvGSsWFlSuHW6SfkY_kaLRFVOLnS8-vMk60mRsQIath3ZBMDhFSlSNjMBwx1HIxonCNYdzWmQQ2KApROQR4Sj7WDl8GNPpIv5QBmD9s"/>
+</div>
+</div>
+</header>
+<!-- Summary Stats: Bento Grid Layout -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+<!-- Total Scans -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_12px_40px_rgba(25,28,29,0.04)]">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-label font-bold uppercase tracking-wider text-secondary">Total scans</span>
+<span class="material-symbols-outlined text-primary bg-primary-fixed/30 p-1.5 rounded-lg">analytics</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-headline font-bold text-on-surface">12,842</span>
+<span class="text-xs text-primary font-bold">+12%</span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-3/4"></div>
+</div>
+</div>
+<!-- Successful -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_12px_40px_rgba(25,28,29,0.04)]">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-label font-bold uppercase tracking-wider text-secondary">Successful</span>
+<span class="material-symbols-outlined text-teal-600 bg-teal-50 p-1.5 rounded-lg">check_circle</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-headline font-bold text-on-surface">12,401</span>
+<span class="text-xs text-teal-600 font-bold">96.5%</span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-teal-500 w-[96.5%]"></div>
+</div>
+</div>
+<!-- Failed -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_12px_40px_rgba(25,28,29,0.04)]">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-label font-bold uppercase tracking-wider text-secondary">Failed</span>
+<span class="material-symbols-outlined text-error bg-error-container/30 p-1.5 rounded-lg">error</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-headline font-bold text-on-surface">124</span>
+<span class="text-xs text-error font-bold">-2%</span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-error w-1/12"></div>
+</div>
+</div>
+<!-- Needs Review -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_12px_40px_rgba(25,28,29,0.04)] border-l-4 border-tertiary">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-label font-bold uppercase tracking-wider text-secondary">Needs review</span>
+<span class="material-symbols-outlined text-tertiary bg-tertiary-fixed/30 p-1.5 rounded-lg">pending_actions</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-headline font-bold text-on-surface">317</span>
+<span class="text-xs text-tertiary font-bold font-label">ACTION REQ.</span>
+</div>
+<div class="mt-4 flex gap-1">
+<div class="h-1 flex-1 bg-tertiary rounded-full"></div>
+<div class="h-1 flex-1 bg-tertiary rounded-full"></div>
+<div class="h-1 flex-1 bg-surface-container rounded-full"></div>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+<!-- Recent Groups Table: Main Visual -->
+<div class="lg:col-span-2 bg-surface-container-low p-1 rounded-2xl overflow-hidden">
+<div class="bg-surface-container-lowest rounded-2xl p-6">
+<div class="flex justify-between items-center mb-8">
+<h3 class="font-headline font-bold text-xl">Recent Groups</h3>
+<button class="text-sm font-label font-bold text-primary hover:underline underline-offset-4">VIEW ALL</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="text-[10px] font-label font-bold text-secondary uppercase tracking-widest border-b border-surface-container-high">
+<th class="pb-4 px-2">Group Name</th>
+<th class="pb-4 px-2">Status</th>
+<th class="pb-4 px-2 text-center">Items</th>
+<th class="pb-4 px-2 text-right">Last Updated</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container/50">
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="py-5 px-2">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">folder</span>
+</div>
+<span class="font-semibold text-on-surface">Q3_Tax_Vouchers</span>
+</div>
+</td>
+<td class="py-5 px-2">
+<span class="px-3 py-1 bg-teal-50 text-teal-700 text-[10px] font-bold rounded-full">COMPLETED</span>
+</td>
+<td class="py-5 px-2 text-center font-medium text-slate-600">412</td>
+<td class="py-5 px-2 text-right text-sm text-slate-400">2 mins ago</td>
+</tr>
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="py-5 px-2">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">sync</span>
+</div>
+<span class="font-semibold text-on-surface">Invoice_Batch_77</span>
+</div>
+</td>
+<td class="py-5 px-2">
+<span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] font-bold rounded-full">PROCESSING</span>
+</td>
+<td class="py-5 px-2 text-center font-medium text-slate-600">1,208</td>
+<td class="py-5 px-2 text-right text-sm text-slate-400">14 mins ago</td>
+</tr>
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="py-5 px-2">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">cloud_upload</span>
+</div>
+<span class="font-semibold text-on-surface">Payroll_Direct_July</span>
+</div>
+</td>
+<td class="py-5 px-2">
+<span class="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-bold rounded-full">UPLOADING</span>
+</td>
+<td class="py-5 px-2 text-center font-medium text-slate-600">88</td>
+<td class="py-5 px-2 text-right text-sm text-slate-400">32 mins ago</td>
+</tr>
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="py-5 px-2">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">edit_note</span>
+</div>
+<span class="font-semibold text-on-surface">Expense_Report_X9</span>
+</div>
+</td>
+<td class="py-5 px-2">
+<span class="px-3 py-1 bg-amber-50 text-amber-700 text-[10px] font-bold rounded-full">DRAFT</span>
+</td>
+<td class="py-5 px-2 text-center font-medium text-slate-600">12</td>
+<td class="py-5 px-2 text-right text-sm text-slate-400">1 hour ago</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Recent Images List: Secondary Detail -->
+<div class="bg-surface-container-high rounded-2xl p-6 h-full flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline font-bold text-xl">Recent Images</h3>
+<span class="material-symbols-outlined text-slate-400">tune</span>
+</div>
+<div class="space-y-4 flex-1">
+<!-- Image Item -->
+<div class="bg-surface-container-lowest p-3 rounded-xl flex gap-3 items-center shadow-sm">
+<div class="w-12 h-12 rounded-lg bg-slate-200 overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="high contrast macro shot of a financial invoice with sharp typography and soft shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCL0saedI8vJAdSyTpwIoo7I0jm6JQuQoTYi_EoZDiAlCnRVc3hOn0gqw276fZC71IFHTEMR_zQIl_T207Cz0u00wcjJIV8ynXEIboVwbXSJ6WjqL3cQzPm0gLYbITbjjybXhoIsqKk9eRzo8Cv3ArVYVz71BRDyNZ0caMqz5c5pPdMOUeTe_Z26uCyCBTCPsspmWXQ_NhmHNy-dNDOpnGZ7vG3NETn_0PvUsspsjVZAidEDPk7BMVGVMIsixi_1hXnvHWfQ8IODpM"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold truncate text-on-surface">inv_2023_9941.pdf</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[9px] font-label font-bold text-teal-600">99% CONFIDENCE</span>
+<span class="w-1 h-1 rounded-full bg-slate-300"></span>
+<span class="text-[10px] text-slate-400 uppercase">3m ago</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-teal-500 text-lg">verified</span>
+</div>
+<!-- Image Item -->
+<div class="bg-surface-container-lowest p-3 rounded-xl flex gap-3 items-center shadow-sm border-l-2 border-error">
+<div class="w-12 h-12 rounded-lg bg-slate-200 overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="blurry close up of a crumpled receipt on a dark background showing illegible text and coffee stain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaqchrlRCGgVmKDENzG_24KgaA99PmgIA2OP4XmWYMLV3wK-mfRkICCXboye7cQnjhhbWqOch3CmFcj2_xU2i-xe1m8nftdx7ohFHQoC-1qE0oA0UtlQxfNNZ8tOpW1SLnftxjIX9VE1W8PsQF0yStp-lpv0nykIUFjLPrN6TwkfyILK1zU6_mtpqqS0s0vKZeiE7xjECF48-0-y_U0vM3Kra28zNxMeDCimYXemD873odF_wetIMBQrQSPsxgr8AZUNJgAGQX4TQ"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold truncate text-on-surface">receipt_cafe_22.jpg</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[9px] font-label font-bold text-error">42% CONFIDENCE</span>
+<span class="w-1 h-1 rounded-full bg-slate-300"></span>
+<span class="text-[10px] text-slate-400 uppercase">12m ago</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-error text-lg">warning</span>
+</div>
+<!-- Image Item -->
+<div class="bg-surface-container-lowest p-3 rounded-xl flex gap-3 items-center shadow-sm">
+<div class="w-12 h-12 rounded-lg bg-slate-200 overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="clean scan of a corporate letterhead with minimalist logo and structured address blocks" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8_8T8Ma_7VQRStAmoi907hcUbgrrMcOJUT3A7NerX1PBoJywmYYwG2En0CJ3IfFblGAOQralUW3XjVQwlIFnDDu1nvlE_IJtJx8_Vb9Bd2il8_9qmUCwWGt4tMcOES4IODh0vYDdlAiGDVqPMNXX77APRdiWQQ0HRxhJVOlwONQAPwSdhsdZpKzYVk9GeKzF1ei3nNYPoNX1XZRDyW_XR-fnK8WT2wA323NMTpbE_YBsCcC0TrjhwKlQoeM5gzi_vHMoZOO2HHlQ"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold truncate text-on-surface">statement_final.png</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[9px] font-label font-bold text-teal-600">91% CONFIDENCE</span>
+<span class="w-1 h-1 rounded-full bg-slate-300"></span>
+<span class="text-[10px] text-slate-400 uppercase">1h ago</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-teal-500 text-lg">verified</span>
+</div>
+<!-- Image Item -->
+<div class="bg-surface-container-lowest p-3 rounded-xl flex gap-3 items-center shadow-sm">
+<div class="w-12 h-12 rounded-lg bg-slate-200 overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="office document showing structured tables and bar charts with professional corporate styling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtvP3KFcHwZN-rNG75WuUSKuPghx-ZXA2KrH82hI8WG_pt3kM_NLzb3EXOpVMylZzXtGRJMSfrTc5-i2HVPICmmj5TwcRAph1y7V3GYJx2A_2x20MdcMfZit6N0kOeol2uK6V2ArwpoIO1MHIWSg0jeyVYWwSaVJ9n_TctbOlR6pMyQRo1TubSEWv7BkiwKQ8x0HXPAnNRib84ln-57cC0OJdFEhsO204ZuEXKhiFheFoNMhdGRy-F5EBPJuqtTD3JoJCk5vMNlNY"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold truncate text-on-surface">doc_analysis_v1.pdf</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[9px] font-label font-bold text-teal-600">97% CONFIDENCE</span>
+<span class="w-1 h-1 rounded-full bg-slate-300"></span>
+<span class="text-[10px] text-slate-400 uppercase">2h ago</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-teal-500 text-lg">verified</span>
+</div>
+</div>
+<button class="w-full mt-6 py-3 border border-outline-variant/30 text-secondary font-label text-[10px] font-bold tracking-widest uppercase hover:bg-surface-container-highest transition-colors rounded-xl">
+                        SCAN MORE IMAGES
+                    </button>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pt-3 pb-8 bg-white/90 dark:bg-slate-950/90 backdrop-blur-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.05)] border-t border-slate-100 dark:border-slate-800">
+<a class="flex flex-col items-center justify-center text-teal-800 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 rounded-xl px-3 py-1 scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-inter text-[10px] uppercase tracking-wider font-bold">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 active:bg-slate-100 dark:active:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-inter text-[10px] uppercase tracking-wider font-bold">Ledger</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 active:bg-slate-100 dark:active:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-inter text-[10px] uppercase tracking-wider font-bold">Groups</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 active:bg-slate-100 dark:active:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-inter text-[10px] uppercase tracking-wider font-bold">Search</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 active:bg-slate-100 dark:active:bg-slate-800 transition-all" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-inter text-[10px] uppercase tracking-wider font-bold">Profile</span>
+</a>
+</nav>
+</body></html>
