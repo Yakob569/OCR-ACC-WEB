@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { decodeBase64Json } from '@/lib/encoding'
 import { getImage, getImageResult, retryImage, submitImageReview } from '@/api/ledgerApi'
@@ -28,6 +28,28 @@ const isAccepted = ref(true)
 const correctedFieldsJson = ref('{}')
 const reviewNotes = ref('')
 
+const canRetry = computed(() => {
+  const status = image.value?.ocr_status
+  return status === 'failed' || status === 'needs_review'
+})
+
+const itemsTable = computed(() => {
+  if (!Array.isArray(decodedItems.value)) return null
+  if (decodedItems.value.length === 0) return null
+  const first = decodedItems.value[0]
+  if (!first || typeof first !== 'object' || Array.isArray(first)) return null
+  return decodedItems.value
+})
+
+const itemsJson = computed(() => {
+  if (!decodedItems.value) return ''
+  try {
+    return JSON.stringify(decodedItems.value, null, 2)
+  } catch {
+    return String(decodedItems.value)
+  }
+})
+
 async function load() {
   errorMessage.value = ''
   isLoading.value = true
@@ -53,6 +75,7 @@ async function load() {
 
 async function onRetry() {
   retryError.value = ''
+  if (!canRetry.value) return
   isRetrying.value = true
   try {
     await retryImage(imageId)
@@ -126,7 +149,7 @@ onMounted(load)
 
         <div class="actions">
           <p v-if="retryError" class="error">{{ retryError }}</p>
-          <button class="secondary" :disabled="isRetrying" @click="onRetry">
+          <button v-if="canRetry" class="secondary" :disabled="isRetrying" @click="onRetry">
             {{ isRetrying ? 'Retrying…' : 'Retry OCR' }}
           </button>
         </div>
@@ -152,8 +175,28 @@ onMounted(load)
       <div class="panel">
         <h3>Line items</h3>
         <p v-if="!decodedItems || decodedItems.length === 0" class="muted">No items.</p>
+        <div v-else-if="itemsTable" class="itemsTable">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(it, idx) in itemsTable" :key="idx">
+                <td>{{ it.description || it.name || it.item || '—' }}</td>
+                <td>{{ it.quantity ?? it.qty ?? '—' }}</td>
+                <td>{{ it.unit_price ?? it.unit ?? it.price ?? '—' }}</td>
+                <td>{{ it.total ?? it.amount ?? it.line_total ?? '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <div v-else class="items">
-          <pre class="json">{{ decodedItems }}</pre>
+          <pre class="json">{{ itemsJson }}</pre>
         </div>
       </div>
 
@@ -363,6 +406,36 @@ h3 {
   font-size: 12px;
   font-weight: 700;
   color: #191c1d;
+}
+
+.itemsTable {
+  margin-top: 10px;
+  overflow: auto;
+  border-radius: 10px;
+  background: #f8f9fa;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.table th {
+  text-align: left;
+  font-size: 11px;
+  color: #51606d;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 10px 12px;
+}
+
+.table td {
+  padding: 10px 12px;
+  font-weight: 800;
+  color: #191c1d;
+  border-top: 1px solid rgba(190, 201, 200, 0.35);
 }
 
 .formRow {
