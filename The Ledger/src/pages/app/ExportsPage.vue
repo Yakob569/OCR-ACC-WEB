@@ -156,6 +156,9 @@ onMounted(async () => {
         <h3>Export history</h3>
         <button class="refresh" :disabled="isLoadingExports || !selectedGroupId" @click="loadExports">Refresh</button>
       </div>
+      <p class="muted">
+        Note: downloads may be unavailable until the backend returns a `storage_url` (some exports can show as “Not ready”).
+      </p>
 
       <p v-if="exportsError" class="error">{{ exportsError }}</p>
       <p v-else-if="isLoadingExports" class="muted">Loading exports…</p>
