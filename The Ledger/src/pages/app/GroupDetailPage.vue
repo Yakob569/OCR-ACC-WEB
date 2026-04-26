@@ -1,7 +1,8 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getGroup, listGroupImages, uploadGroupImages } from '@/api/ledgerApi'
+import { getGroup, listGroupExports, listGroupImages, listGroupResults, uploadGroupImages } from '@/api/ledgerApi'
+import { decodeBase64Json } from '@/lib/encoding'
 
 const router = useRouter()
 const route = useRoute()
@@ -9,6 +10,8 @@ const groupId = computed(() => route.params.groupId)
 
 const group = ref(null)
 const images = ref([])
+const results = ref([])
+const exportsList = ref([])
 
 const isLoading = ref(false)
 const isUploading = ref(false)
@@ -21,16 +24,22 @@ async function load() {
   errorMessage.value = ''
   isLoading.value = true
   try {
-    const [g, imgs] = await Promise.all([
+    const [g, imgs, res, exps] = await Promise.all([
       getGroup(groupId.value),
       listGroupImages(groupId.value, { limit: 50, offset: 0 }),
+      listGroupResults(groupId.value, { limit: 50, offset: 0 }),
+      listGroupExports(groupId.value, { limit: 50, offset: 0 }),
     ])
     group.value = g
     images.value = Array.isArray(imgs) ? imgs : []
+    results.value = Array.isArray(res) ? res : []
+    exportsList.value = Array.isArray(exps) ? exps : []
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : 'Failed to load group'
     group.value = null
     images.value = []
+    results.value = []
+    exportsList.value = []
   } finally {
     isLoading.value = false
   }
@@ -61,6 +70,19 @@ function statusLabel(img) {
   if (img.ocr_status) return img.ocr_status
   if (img.upload_status) return img.upload_status
   return 'unknown'
+}
+
+function getResultImageId(r) {
+  return r?.receipt_image_id || r?.receiptImageId || r?.image_id || r?.imageId || ''
+}
+
+function previewFields(r) {
+  const decoded = decodeBase64Json(r?.fields_json)
+  if (!decoded || typeof decoded !== 'object' || Array.isArray(decoded)) return null
+  const merchant = decoded.merchant || decoded.merchant_name || decoded.vendor || decoded.store
+  const date = decoded.date || decoded.transaction_date
+  const total = decoded.total || decoded.amount_total || decoded.grand_total
+  return { merchant, date, total }
 }
 
 onMounted(load)
@@ -145,6 +167,55 @@ onMounted(load)
           </li>
         </ul>
       </div>
+
+      <div class="results">
+        <div class="imagesHeader">
+          <h3>Results</h3>
+          <div class="muted">{{ results.length }} loaded</div>
+        </div>
+
+        <p v-if="results.length === 0" class="muted">No results yet.</p>
+
+        <ul v-else class="list">
+          <li v-for="r in results" :key="r.id" class="row rowWide">
+            <div class="name">{{ getResultImageId(r) || r.id }}</div>
+            <div class="pill">{{ r.success ? 'success' : 'failed' }}</div>
+            <div class="desc" v-if="previewFields(r)">
+              {{ previewFields(r).merchant || '—' }} · {{ previewFields(r).date || '—' }} ·
+              {{ previewFields(r).total || '—' }}
+            </div>
+            <div class="desc" v-else>—</div>
+            <button
+              class="smallLink"
+              :disabled="!getResultImageId(r)"
+              @click="router.push(`/app/images/${getResultImageId(r)}`)"
+            >
+              Open
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="exports">
+        <div class="imagesHeader">
+          <h3>Exports</h3>
+          <div class="muted">{{ exportsList.length }} loaded</div>
+        </div>
+
+        <p v-if="exportsList.length === 0" class="muted">No exports yet.</p>
+
+        <ul v-else class="list">
+          <li v-for="exp in exportsList" :key="exp.id" class="row rowWide">
+            <div class="name">{{ exp.format || 'csv' }}</div>
+            <div class="pill">{{ exp.row_count ?? '—' }} rows</div>
+            <div class="desc">{{ exp.created_at || '' }}</div>
+            <a v-if="exp.storage_url" class="smallLink" :href="exp.storage_url" target="_blank" rel="noreferrer"
+              >Download</a
+            >
+            <span v-else class="pill">Not ready</span>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -209,7 +280,9 @@ h3 {
 
 .stats,
 .upload,
-.images {
+.images,
+.results,
+.exports {
   padding: 14px;
   border-radius: 12px;
   background: #ffffff;
@@ -338,6 +411,17 @@ h3 {
   font-weight: 900;
   color: #191c1d;
   font-size: 13px;
+}
+
+.desc {
+  font-weight: 800;
+  color: #51606d;
+  font-size: 13px;
+  word-break: break-word;
+}
+
+.rowWide {
+  grid-template-columns: 1fr auto 1.3fr auto;
 }
 
 .smallLink {
