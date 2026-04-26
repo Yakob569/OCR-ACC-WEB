@@ -16,25 +16,31 @@ This folder tracks progress for the web app located at `Documents/Ledger/web/The
 - Implemented API client + auth store with refresh-on-401 retry.
 - Wired `/login` and `/getstarted` forms to Go auth endpoints.
 - Added protected `/app/*` routes and a minimal `AppShell` layout placeholder.
+- Implemented functional v1 protected screens:
+  - Dashboard: loads `GET /api/v1/dashboard/summary`
+  - Groups: list + create (`GET/POST /api/v1/groups`)
+  - Group detail: group + image list + multi-upload (`GET /groups/:id`, `GET /groups/:id/images`, `POST /groups/:id/images`)
+  - Image detail: metadata + result decode + review/retry
+  - Exports: create + history per group
 
 ## In progress / Next
 
-### Step 2 — First real protected screens
+### Step 3 — UX polish + completeness
 
-- Dashboard: `GET /api/v1/dashboard/summary`
-- Groups list + create group: `GET/POST /api/v1/groups`
 - Group detail:
-  - `GET /api/v1/groups/:groupId`
-  - uploads: `POST /api/v1/groups/:groupId/images` (multipart key: `files`)
-  - list images: `GET /api/v1/groups/:groupId/images`
+  - pagination for images/results/exports
+  - add results table (`GET /api/v1/groups/:groupId/results`)
+- Dashboard:
+  - if `recent_groups/recent_images` are empty, fallback to listing groups
 - Image detail:
-  - `GET /api/v1/images/:imageId`
-  - `GET /api/v1/images/:imageId/result` (decode base64 JSON fields)
-  - `POST /api/v1/images/:imageId/review`
-  - `POST /api/v1/images/:imageId/retry`
+  - render line items in a proper table (not JSON dump)
+  - hide “Retry OCR” button unless failed/needs_review
 - Exports:
-  - `POST /api/v1/groups/:groupId/exports/csv`
-  - `GET /api/v1/groups/:groupId/exports`
+  - handle `storage_url: null` better (backend might need a download endpoint)
+- Global:
+  - toast system
+  - consistent loading/empty/error states
+  - token expiry UI handling (forced logout vs silent refresh)
 
 ## Left (Later)
 
