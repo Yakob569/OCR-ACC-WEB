@@ -12,29 +12,31 @@ This folder tracks progress for the web app located at `Documents/Ledger/web/The
 ## Done
 
 - Added this `progress/` tracking folder and this progress file.
+- Added `VITE_API_BASE_URL` support (defaults to Render base URL).
+- Implemented API client + auth store with refresh-on-401 retry.
+- Wired `/login` and `/getstarted` forms to Go auth endpoints.
+- Added protected `/app/*` routes and a minimal `AppShell` layout placeholder.
 
 ## In progress / Next
 
-### Step 1 — API + Auth foundation
+### Step 2 — First real protected screens
 
-- Add `VITE_API_BASE_URL` with default to `https://ocr-acc-user-module.onrender.com`
-- Add API client wrapper (Bearer attach, 401 refresh+retry once)
-- Add minimal auth store (localStorage persistence):
-  - `login`, `register`, `logout`, `refresh`
-- Wire existing `/login` and `/getstarted` pages to backend endpoints:
-  - `POST /api/v1/login`
-  - `POST /api/v1/register`
-
-### Step 2 — Protected routes + app shell skeleton
-
-- Switch `App.vue` to `<router-view />` rendering
-- Add protected routes under `/app/*`:
-  - `/app/dashboard`, `/app/groups`, `/app/groups/:groupId`, `/app/images/:imageId`, `/app/exports`, `/app/settings`
-- Add router guard: unauthenticated → redirect to `/login`
-- Add minimal `AppShell` layout placeholder
+- Dashboard: `GET /api/v1/dashboard/summary`
+- Groups list + create group: `GET/POST /api/v1/groups`
+- Group detail:
+  - `GET /api/v1/groups/:groupId`
+  - uploads: `POST /api/v1/groups/:groupId/images` (multipart key: `files`)
+  - list images: `GET /api/v1/groups/:groupId/images`
+- Image detail:
+  - `GET /api/v1/images/:imageId`
+  - `GET /api/v1/images/:imageId/result` (decode base64 JSON fields)
+  - `POST /api/v1/images/:imageId/review`
+  - `POST /api/v1/images/:imageId/retry`
+- Exports:
+  - `POST /api/v1/groups/:groupId/exports/csv`
+  - `GET /api/v1/groups/:groupId/exports`
 
 ## Left (Later)
 
 - Implement actual post-login screens (Dashboard/Groups/Group detail/Image detail/Exports) and wire to endpoints.
 - Improve error + loading UX across the app.
-

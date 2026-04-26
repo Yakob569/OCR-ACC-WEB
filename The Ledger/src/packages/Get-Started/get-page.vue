@@ -1,9 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { register } from '@/stores/auth'
 
 const router = useRouter()
+const route = useRoute()
 
 const fullName = ref('')
 const email = ref('')
@@ -22,7 +23,8 @@ async function onSubmit() {
       fullName: fullName.value,
       phone: phone.value,
     })
-    router.push('/app/dashboard')
+    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : ''
+    router.push(redirect || '/app/dashboard')
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : 'Registration failed'
   } finally {

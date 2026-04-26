@@ -1,9 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { login } from '@/stores/auth'
 
 const router = useRouter()
+const route = useRoute()
 
 const email = ref('')
 const password = ref('')
@@ -15,7 +16,8 @@ async function onSubmit() {
   isSubmitting.value = true
   try {
     await login({ email: email.value, password: password.value })
-    router.push('/app/dashboard')
+    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : ''
+    router.push(redirect || '/app/dashboard')
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : 'Login failed'
   } finally {
