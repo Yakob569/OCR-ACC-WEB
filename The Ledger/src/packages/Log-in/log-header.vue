@@ -5,7 +5,7 @@ const route=useRouter()
 <template>
     <section>
         <div class="the-Ledger">
-         <div class="ledger-logo">
+         <div class="ledger-logo" @click="route.push('/')" style="cursor: pointer;">
             <h2 style="font-weight: bold; font-size: 20px; color:#005b51;">The Architectural Ledger</h2>
          </div>
          <div class="ledger-lest">

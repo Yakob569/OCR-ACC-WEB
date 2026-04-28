@@ -1,3 +1,7 @@
+<script setup>
+import { useRouter } from 'vue-router';
+const router = useRouter();
+</script>
 <template>
 <section>
     <div class="product">
@@ -15,7 +19,7 @@
                 clarity and institutional security in one seamless interface.
              </p>
              <div class="buton">
-                <button style="padding: 15px 25px; background-color: #005b51; color: white; border: none; border-radius: 6px; font-weight: 700; font-size: 16px; ">Start Desingning Your Future</button>
+                <button @click="router.push('/getstarted')" style="padding: 15px 25px; background-color: #005b51; color: white; border: none; border-radius: 6px; font-weight: 700; font-size: 16px; cursor: pointer;">Start Designing Your Future</button>
                 <button style="padding: 15px 25px; background-color: #d4e4f4; border: none; border-radius: 6px; color: gray; font-weight: 700; font-size: 16px;">View Demo</button>
              </div>
         </div>

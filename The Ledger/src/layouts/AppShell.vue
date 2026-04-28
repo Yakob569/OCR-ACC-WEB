@@ -59,7 +59,7 @@ onMounted(async () => {
     <main class="content">
       <header class="topbar">
         <div class="title">{{ route.name || 'App' }}</div>
-        <router-link class="new-group" to="/app/groups">New Group</router-link>
+        <router-link v-if="route.path === '/app/groups'" class="new-group" to="/app/groups">New Group</router-link>
       </header>
 
       <section class="page">

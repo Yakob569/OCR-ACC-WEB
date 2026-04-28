@@ -6,7 +6,7 @@ const router=useRouter()
     <section>
   <nav>
     <div class="the-ledger">
-        <div class="ledger-logo">
+        <div class="ledger-logo" @click="router.push('/')" style="cursor: pointer;">
             <h3>The Ledger</h3>
         </div>
         <div class="ledger-lest">

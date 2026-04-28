@@ -1,3 +1,7 @@
+<script setup>
+import { useRouter } from 'vue-router';
+const router = useRouter();
+</script>
 <template>
     <section>
         <div class="fortress">
@@ -24,7 +28,7 @@
                     <p>[object Object]</p>
                     <h3>End-to-End Encryption</h3>
                     <p>Every byte is encrypted before it leaves your device, ensuring zero-knowledge privacy.</p>
-                </div>                                
+                </div>
               </div>
             </div>
         </div>
@@ -54,7 +58,7 @@
                 <h3>Join 20,000+ high-growth firms and individuals managing their wealth with The Ledger.</h3>
             </div>
             <div class="Experience-buton">
-                <button style="border: none; color: #00554c; padding: 20px 15px; width: 220px; border-radius: 10px; font-size: 19px; font-weight: bold;">Get Started Free</button>
+                <button @click="router.push('/getstarted')" style="border: none; color: #00554c; padding: 20px 15px; width: 220px; border-radius: 10px; font-size: 19px; font-weight: bold; cursor: pointer;">Get Started Free</button>
                 <button style="border: 1px solid gainsboro; background-color: #00554c; color: white;  padding: 20px 15px; width: 200px; border-radius: 10px; font-size: 19px; font-weight: bold;">Talk to Sales</button>
             </div>
             </div>
@@ -66,7 +70,7 @@
 .fortress{
     display: flex;
     flex-direction: column;
-    align-items: center;    
+    align-items: center;
     justify-content: center;
     padding: 5rem 4rem;
     background-image: linear-gradient(90deg, #191c1d 50%, rgba(22,25,26,0.85) 50%),url(https://lh3.googleusercontent.com/aida-public/AB6AXuAPoQb0ZCwUXjLz_FNRNq4H_oqEfdeNeIS-BFLEAYBKskK1iMrpSRHmWufFT7S-YaevWDAm07UcKeLUB2Sp-yZZaObjBjj3BsuE2aq5mSypavbvc1dD6ei85dY-Eht8xAE6EU2TMmVTakMMpT7IZhE9rD2ERvXWX52tIaKtX4BqnDfdzqO4MQ0OImAjhjsQ7Iw9Bjt-YKX3iYMGD8wcovCZ34P3rWFd8xVUyQ6BKOdT3cBbLn5Kih8XmXEnpaPTrfRNPpJxoZbQnnw);
@@ -79,7 +83,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3rem; 
+    gap: 3rem;
 }
 .text p{
     max-width: 600px;
@@ -104,88 +108,100 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 5rem 2rem;
 }
 .ledger{
     display: flex;
     align-items: center;
-    gap: 5rem;
-    max-width: 1200px;
-    background-color: #f2f4f5;
-    margin-top: 6rem;
-    padding: 3rem;
-    border-radius: 30px;
+    gap: 3rem;
 }
-.protfolio-text h1{
-    font-size: 45px;
-    font-weight: bold;
-}
-.protfolio-text h3{
-    color: #576160;
-    max-width: 450px;
-}
-.protfolio-lest{
-    margin-top: 2rem;
+.protfolio-text{
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
+}
+.protfolio-text h1{
+    font-size: 55px;
+    font-weight: bold;
+    color: #1a1a1a;
+}
+.protfolio-text h3{
+    max-width: 500px;
+    font-size: 19px;
+    font-weight: 500;
+    color: #576160;
+}
+.protfolio-lest{
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+.protfolio-lest p{
+    font-size: 14px;
+    font-weight: 600;
 }
 .protfolio-img img{
-    height: 500px;
+    height: 400px;
     border-radius: 10px;
 }
 .Experience{
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 6rem 2rem;
+    background-color: #00554c;
 }
 .Experience-text{
     display: flex;
     flex-direction: column;
-    gap: 3rem;
     align-items: center;
-    background-color: #00554c;
-    color: white;
-    max-width: 1500px;
-    padding: 3rem 5rem;
-    border-radius: 30px;    
-    margin-top: 5rem;
+    gap: 3rem;
 }
 .Experience-title{
     display: flex;
     flex-direction: column;
-    text-align: center;
-    align-items: center;    
+    align-items: center;
+    gap: 1.5rem;
 }
 .Experience-title h1{
+    font-size: 52px;
     font-weight: bold;
-    font-size: 50px;
+    color: white;
 }
 .Experience-title h3{
-    max-width: 620px;
-    font-size: 18px;
+    font-size: 19px;
+    font-weight: 500;
+    color: #8fbdb8;
+    max-width: 700px;
     text-align: center;
 }
 .Experience-buton{
     display: flex;
+    gap: 1.5rem;
     align-items: center;
-    gap: 1rem;
-    }
-@media(max-width: 840px){
-    .security{
-        text-align: center;
-    }
-    .security-lest{
-        display: flex;
-        flex-direction: column;
-        text-align: start;
-        gap: 1.5rem;
+}
+@media(max-width:840px){
+    .protfolio{
+        padding: 1rem 2rem;
     }
     .ledger{
         display: flex;
         flex-direction: column;
     }
-    .Experience{
-        padding: 1rem;
-    }  
+    .protfolio-text h1{
+        font-size: 40px;
+    }
+    .protfolio-img img{
+        height: 300px;
+    }
+    .Experience-title h1{
+        font-size: 35px;
+        text-align: center;
+    }
+    .Experience-buton{
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
 }
 </style>
