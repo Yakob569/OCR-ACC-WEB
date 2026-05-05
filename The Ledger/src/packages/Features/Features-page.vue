@@ -19,7 +19,7 @@ const router = useRouter();
                 clarity and institutional security in one seamless interface.
              </p>
              <div class="buton">
-                <button @click="router.push('/getstarted')" style="padding: 15px 25px; background-color: #005b51; color: white; border: none; border-radius: 6px; font-weight: 700; font-size: 16px; cursor: pointer;">Start Designing Your Future</button>
+                <button @click="router.push('/getstarted')" style="padding: 15px 20px; background-color: #005b51; color: white; border: none; border-radius: 6px; font-weight: 700; font-size: 16px; cursor: pointer;">Start Designing Your Future</button>
                 <button style="padding: 15px 25px; background-color: #d4e4f4; border: none; border-radius: 6px; color: gray; font-weight: 700; font-size: 16px;">View Demo</button>
              </div>
         </div>
@@ -53,6 +53,7 @@ section{
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 1rem;
 }
 .ecoststem{
     display: grid;
@@ -94,10 +95,10 @@ line-height: 5rem;
     gap: 1rem;
 }
 .note p{
-max-width: 450px;
-color:gray;
-font-weight: 500;
-font-size: 17px;
+    max-width: 450px;
+    color:gray;
+    font-weight: 500;
+    font-size: 17px;
 }
 .buton{
     display: flex;
@@ -145,12 +146,13 @@ font-size: 17px;
     color: #005148;
     font-weight: bold;
 }
-@media(max-width:840px){
+@media(max-width:890px){
     .product{
         display: flex;
         align-items: center;
         justify-content: start;
-        padding: 1rem 2rem;
+        flex-direction: column;
+        
     }
     .ecoststem{
         display: flex;
@@ -175,5 +177,53 @@ font-size: 17px;
         align-items: flex-end;
     }
 
+}
+@media(max-width:480px){
+    .product{
+        justify-content: start;
+        align-items: start;
+        padding: 10px;
+    }
+     .ecoststem{
+        gap: 5rem;
+        align-items: start;
+     }
+    .title h1{
+        font-size: 50px;
+        line-height: 3.5rem;
+    }
+    .note p{
+        max-width: 350px;
+    }
+    .product-img img{
+        height: 380px;
+    }
+    .total{
+        padding: 10px;
+    }    
+}
+@media(max-width:360px){
+    .product{
+        justify-content: start;
+        align-items: start;
+        padding: 10px;
+    }
+     .ecoststem{
+        gap: 5rem;
+        align-items: start;
+     }
+    .title h1{
+        font-size: 50px;
+        line-height: 3.5rem;
+    }
+    .note p{
+        max-width: 350px;
+    }
+    .product-img img{
+        height: 330px;
+    }
+    .total{
+        padding: 10px;
+    }
 }
 </style>

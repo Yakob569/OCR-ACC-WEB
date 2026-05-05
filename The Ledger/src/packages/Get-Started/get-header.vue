@@ -69,6 +69,10 @@ const route=useRouter()
     .ledger-lest{
         display: none;
     }
- 
+}
+@media(max-width: 360px){
+    .the-Ledger{
+        padding:10px 0px;
+    }
 }
 </style>

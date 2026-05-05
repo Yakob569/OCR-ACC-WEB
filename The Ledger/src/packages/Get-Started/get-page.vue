@@ -139,8 +139,7 @@ async function onSubmit() {
 </template>
 <style scoped>
 section{
-    padding-top: 6rem;
-    background-color: #f4f5f6;
+    padding-top: 4rem;
 }
 .design{
     display: flex;
@@ -222,7 +221,7 @@ section{
     gap: 3rem;
     align-items: start;
     border-radius: 10px;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 .create-titile{
     display: flex;
@@ -347,5 +346,51 @@ section{
         flex-direction: column;
         gap: 1rem;
     }
-}
+   }
+   @media(max-width: 480px){
+    .desing-img{
+        display: none;
+    }
+    .design-titile h1{
+    font-size: 40px;
+    line-height: 45px;
+    }
+    .create-account{
+        width: 90%;
+    }
+    .protocol p{
+    max-width: 400px;
+    padding: 0 1rem;
+    }
+    .last{
+    margin-top: 1rem;
+    }    
+
+   }
+@media(max-width: 360px){
+    .design{
+        padding: 1rem;
+    }
+    .create-account{
+    width: 85%;
+    padding:1rem ;
+    justify-content: center;
+    align-items: center;
+    }
+    .desing-img{
+        display: none;
+    }
+    .protocol p{
+        max-width: 350px;
+    }
+    .app{
+        gap: 5px;
+    }
+    .last p{
+        text-align: center;
+    }
+    .leste{
+        flex-direction: column;
+    }
+}   
 </style>

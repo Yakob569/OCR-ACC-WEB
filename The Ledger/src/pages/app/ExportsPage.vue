@@ -20,8 +20,6 @@ const isCreating = ref(false)
 const createError = ref('')
 
 const includeCorrectedValues = ref(true)
-const availableColumns = ['date', 'merchant', 'total', 'tax', 'currency', 'payment_method', 'receipt_type']
-const selectedColumns = ref(['date', 'merchant', 'total'])
 
 const groupIdFromQuery = computed(() => (typeof route.query.groupId === 'string' ? route.query.groupId : ''))
 
@@ -63,7 +61,7 @@ async function onCreateExport() {
   isCreating.value = true
   try {
     await createGroupCsvExport(selectedGroupId.value, {
-      selectedColumns: selectedColumns.value,
+      selectedColumns: [],
       includeCorrectedValues: includeCorrectedValues.value,
     })
     await loadExports()
@@ -71,14 +69,6 @@ async function onCreateExport() {
     createError.value = error instanceof Error ? error.message : 'Failed to create export'
   } finally {
     isCreating.value = false
-  }
-}
-
-function toggleColumn(col) {
-  if (selectedColumns.value.includes(col)) {
-    selectedColumns.value = selectedColumns.value.filter((c) => c !== col)
-  } else {
-    selectedColumns.value = [...selectedColumns.value, col]
   }
 }
 
@@ -118,23 +108,6 @@ onMounted(async () => {
       </div>
 
       <div class="formRow">
-        <label class="label">Columns</label>
-        <div class="cols">
-          <button
-            v-for="col in availableColumns"
-            :key="col"
-            type="button"
-            class="chip"
-            :class="{ active: selectedColumns.includes(col) }"
-            @click="toggleColumn(col)"
-          >
-            {{ col }}
-          </button>
-        </div>
-        <p class="muted">Selected: {{ selectedColumns.length }}</p>
-      </div>
-
-      <div class="formRow">
         <label class="check">
           <input v-model="includeCorrectedValues" type="checkbox" />
           <span>Include corrected values</span>
@@ -144,10 +117,10 @@ onMounted(async () => {
       <p v-if="createError" class="error">{{ createError }}</p>
       <button
         class="primary"
-        :disabled="isCreating || !selectedGroupId || selectedColumns.length === 0"
+        :disabled="isCreating || !selectedGroupId"
         @click="onCreateExport"
       >
-        {{ isCreating ? 'Generating…' : 'Generate CSV export' }}
+        {{ isCreating ? 'Generating…' : 'Generate VAT Purchase CSV' }}
       </button>
     </div>
 

@@ -34,9 +34,7 @@
             </div>
         </footer>
         <div class="year">
-            <p>© 2024 The Financial Ledger. All rights reserved.</p>
-            <p>[object Object][object Object][object Object]</p>
-        </div>
+            <p>© 2024 The Financial Ledger. All rights reserved.</p>        </div>
     </section>
 </template>
 <style scoped>
@@ -103,6 +101,18 @@ color: #576160;
     }   
     .year p{
         font-size: 13px;
+    }
+}
+@media(max-width:480px){
+    .two-line{
+        flex-direction: column;
+        gap: 4rem;
+    }
+}
+@media(max-width:360px){
+    .two-line{
+        flex-direction: column;
+        gap: 4rem;
     }
 }
 </style>

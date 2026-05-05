@@ -47,9 +47,7 @@ async function onSubmit() {
                         the atelier.
                     </p>
                 </div>
-                <p v-if="errorMessage" style="color: #ba1a1a; font-size: 13px; font-weight: 600; width: 350px;">
-                  {{ errorMessage }}
-                </p>
+                <div class="lo">
                 <div class="log-email">
                   <label style="font-size: 13px; color: #444e4d; font-weight: 600;">Email Address</label>
                   <input v-model="email" autocomplete="email" required type="email" placeholder="name@firm.com">
@@ -57,14 +55,18 @@ async function onSubmit() {
                 <div class="log-Password">
                    <div class="passwor-text">
                     <label style="font-size: 13px; color: #444e4d; font-weight: 600;">Password</label>
-                    <p style="font-size: 13px; color:#005b51; font-weight: 600;">Forgot Password?</p>
+                    <p style="font-size: 13px; color:#005b51; font-weight: 600; cursor: pointer;">Forgot Password?</p>
                    </div>
                    <div class="Password-in">
                     <input v-model="password" autocomplete="current-password" required type="password" placeholder=". . . . . .">
                    </div> 
                 </div>
+                <p v-if="errorMessage" style="color: #ba1a1a; font-size: 12px; font-weight: 600; width: 300px;">
+                  {{ errorMessage }}
+                </p>
+                </div>
                 <div class="butn">
-                <button :disabled="isSubmitting" style="padding: 10px 20px; width: 350px; background-color: #005b51; color: white; border: none; border-radius: 6px; font-weight: 700; font-size: 18px; ">Sign in to Ledger</button>
+                <button :disabled="isSubmitting" style="padding: 15px 20px; width: 380px; background-color: #005b51; color: white; border: none; border-radius: 6px; font-weight: 700; font-size: 18px; ">Sign in to Ledger</button>
                 </div>
             <div class="or">
                 <span style="width: 100px; height: 0.5px; background-color: #808584;"></span>
@@ -95,7 +97,7 @@ async function onSubmit() {
             <div class="create">
                 <p style="font-size: 13px; color: #808584;">New to the atelier? <b @click="router.push('/getstarted')" style="cursor: pointer; color: #005b51; font-weight: 700;">Create Account</b></p>
             </div>                
-            </form>
+            </form>            
             </div>
            </div> 
         </div>
@@ -117,7 +119,7 @@ section{
     height: 800px;
     align-items: stretch;
     width: 100%;
-    max-width: 1100px;
+    max-width: 1200px;
     border-radius: 10px;
     box-shadow: 1px 1px 3px 3px rgba(232, 232, 236, 0.5);
     overflow: hidden;
@@ -158,19 +160,33 @@ max-width: 500px;
     display: flex;
     flex-direction: column;
     gap: 5px;
+    padding: 5rem 2rem;
+}
+.log-text p{
+    font-size: 16px;
+    color: #51606d;
+}
+.lo{
+    display: flex;
+    gap: 2rem;
+    flex-direction: column;
+    align-items: center;  
+    max-width: 500px;
 }
 .log-email{
     display: flex;
     flex-direction: column;
     gap: 1px;
+    width: 100%;
 }
 .log-email input{
     border: none;
     border-bottom: 0.5px solid rgb(225, 222, 222);
     padding: 15px 0;
     font-size: 17px;
-    width: 350px;
+    width: 100%;
     outline: none;
+    padding-left: 10px;
 }
 .log-email input:focus{
     border-bottom: 1px solid black;
@@ -178,7 +194,7 @@ max-width: 500px;
 .passwor-text{
     display: flex;
     justify-content: space-between;
-    width: 350px;
+    width: 100%;
 }
 .Password-in input{
     border: none;
@@ -186,8 +202,9 @@ max-width: 500px;
     padding: 15px 0;
     font-size: 20px;
     font-weight: bold;
-    width: 350px;
+    width: 400px;
     outline: none;    
+    padding-left: 10px;
 }
 .Password-in input:focus{
     border-bottom: 1px solid black;
@@ -195,6 +212,7 @@ max-width: 500px;
 .butn{
     display: flex;
     align-items: start;
+    width: 100%;
 }
 .or{
     display: flex;
@@ -231,7 +249,9 @@ max-width: 500px;
   .log-img {
     display: none; 
   }
-
+  .log-text{
+    padding: 2rem 0;
+  }
   .log-form {
     width: 100%;
     padding: 2rem;
@@ -244,5 +264,64 @@ max-width: 500px;
     width: 100%;
     justify-content: space-between;
   } 
+}
+@media (max-width: 480px){
+    .log{
+        max-width: 500px;
+        width: 100%;
+        padding: 1rem;
+        align-items: center;
+    }
+    .log-text{
+        padding: 5px;
+    }
+    .app{
+        gap: 1rem;
+        justify-content: center;
+    }
+   .lo{
+    width: 100%;
+   }
+   .log-email{
+    width: 100%;
+   }
+   .log{
+    width: 100%;
+   }
+   .log-Password{
+    width: 100%;
+   }    
+}
+@media (max-width: 360px) {
+    section{
+        margin-top:4rem;
+    }
+    .log{
+        max-width: 500px;
+        width: 100%;
+        padding: 1rem;
+        align-items: center;
+    }
+    .log-text{
+        padding: 1rem 1.8rem;
+    }
+    .app{
+        gap: 1rem;
+        justify-content: center;
+    }
+   .lo{
+    max-width: 326px;
+    
+   }
+   .log-email{
+    width: 100%;
+   }
+   .log{
+    width: 100%;
+   }
+   .log-Password{
+    width: 100%;
+   }
+
 }
 </style>

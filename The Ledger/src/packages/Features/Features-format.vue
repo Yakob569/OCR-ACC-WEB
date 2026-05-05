@@ -1,9 +1,9 @@
 <template>
+    <section>
     <div class="processing">
 <div class="Autonomous">
     <div class="processing-text">
         <div class="processing-titil">
-        <p style="font-size: 16px; font-weight: 500; color: #000;">[object Object]</p>
         <h2 style="font-weight: bold; font-size:30px; color: #000;">Autonomous Processing</h2>
             <p style="color: grey; font-weight: 600;">Our proprietary neural engines leverage deep learning to analyze paper receipts, 
                 digital invoices, and complex bank statements with 99.9% accuracy.
@@ -16,9 +16,9 @@
     <div class="metadta">
         <h2 style="font-weight: bold;">Metadata Enrichment</h2>
         <div class="lest">
-            <p s>[object Object]<b style="font-weight: bold; margin-left: 10px;">Geographic Tagging</b></p>
-            <p>[object Object]<b style="font-weight: bold; margin-left: 10px;">Smart Classification</b></p>
-            <p>[object Object]<b style="font-weight: bold; margin-left: 10px;">Tax Compliance Check</b></p>
+            <p><b style="font-weight: bold; margin-left: 10px;">Geographic Tagging</b></p>
+            <p><b style="font-weight: bold; margin-left: 10px;">Smart Classification</b></p>
+            <p><b style="font-weight: bold; margin-left: 10px;">Tax Compliance Check</b></p>
         </div>
         <div class="extraction">
             <p style="font-size: 13px;">"Extraction completed in 0.4s with high confidence."</p>
@@ -45,9 +45,9 @@
             <button style="border: none; background-color: #1d5c4c; padding: 4px; width: 50px; border-radius: 10px;"></button> 
            </div>
            <div class="note">
-             <button style="border: none; background-color: #E5E2E2; padding: 4px; width: 350px; border-radius: 10px;"></button>
              <button style="border: none; background-color: #E5E2E2; padding: 4px; width: 320px; border-radius: 10px;"></button>
-             <button style="border: none; background-color: #E5E2E2; padding: 4px; width: 300px; border-radius: 10px;"></button>
+             <button style="border: none; background-color: #E5E2E2; padding: 4px; width: 290px; border-radius: 10px;"></button>
+             <button style="border: none; background-color: #E5E2E2; padding: 4px; width: 260px; border-radius: 10px;"></button>
            </div>
         </div>
     </div>
@@ -61,16 +61,16 @@
             </p>
         </div>
         <div class="Universal-lest">
-            <p>[object Object]<b>Custom Field Mapping</b></p>
-            <p>[object Object]<b>Scheduled Monthly Auto-Reports</b></p>
-            <p>[object Object]<b>Direct API Integration for Developers</b></p>
+            <p><b>Custom Field Mapping</b></p>
+            <p><b>Scheduled Monthly Auto-Reports</b></p>
+            <p><b>Direct API Integration for Developers</b></p>
         </div>
     </div>
   </div>
   </div>
+  </section>
 </template>
 <style scoped>
-
 .processing{
     display: flex;
     align-items: center;
@@ -202,6 +202,7 @@
     padding-top: 1rem;
     gap: 1rem;
 }
+
 .Universal-text{
     display: flex;
     flex-direction: column;
@@ -283,5 +284,44 @@ font-size: 15px;
     gap: 1rem;
    }
 }
-
+@media(max-width: 480px){
+    .Universal-img-card{
+        flex-direction: column;
+    }
+    .note button{
+        width: 10px;
+    }
+    .metadta{
+        width: 100%;
+    }
+    .processing-titil p{
+        width: 160%;
+    }
+    .processing-img{
+        margin-top: 5rem;
+    }
+    .processing-img img{
+        width: 100%;
+    }
+}
+@media(max-width: 360px){
+    .Universal-img-card{
+        flex-direction: column;
+    }
+    .note button{
+        width: 10px;
+    }
+    .metadta{
+        width: 100%;
+    }
+    .processing-titil p{
+        width: 160%;
+    }
+    .processing-img{
+        margin-top: 5rem;
+    }
+    .processing-img img{
+        width: 100%;
+    }
+}
 </style>

@@ -8,24 +8,22 @@ const router = useRouter();
             <div class="security">
               <div class="titile">
                 <p style="color: #00d492; font-weight: bold; text-align: center;">The Fortress</p>
-                <h2 style="font-weight: bold; color: white; font-size: 45px;">Institutional-Grade Security</h2>
+                <h2 >Institutional-Grade Security</h2>
                 <div class="text">
-                    <p style="color: grey; font-size: 16px; text-align: center;">Financial security is the core of our architecture. We utilize industry-leading AES-256 bit encryption and SOC2 Type II compliant infrastructure.</p>
+                    <p style="">Financial security is the core of our architecture. We utilize industry-leading AES-256 bit encryption and SOC2 Type II compliant infrastructure.</p>
                 </div>
               </div>
               <div class="security-lest">
                 <div class="lest">
-                    <p>[object Object]</p>
                     <h3 style="font-weight: bold;">End-to-End Encryption</h3>
                     <p>Every byte is encrypted before it leaves your device, ensuring zero-knowledge privacy.</p>
                 </div>
                 <div class="lest">
-                    <p>[object Object]</p>
                     <h3>End-to-End Encryption</h3>
                     <p>Every byte is encrypted before it leaves your device, ensuring zero-knowledge privacy.</p>
                 </div>
                 <div class="lest">
-                    <p>[object Object]</p>
+                    <p></p>
                     <h3>End-to-End Encryption</h3>
                     <p>Every byte is encrypted before it leaves your device, ensuring zero-knowledge privacy.</p>
                 </div>
@@ -41,9 +39,9 @@ const router = useRouter();
 
                     </h3>
                     <div class="protfolio-lest">
-                        <p>[object Object]<b style="font-weight: bold; margin-left: 5px;">Desktop App</b></p>
-                        <p>[object Object]<b style="font-weight: bold; margin-left: 5px;">iOS / Android</b></p>
-                        <p>[object Object]<b style="font-weight: bold; margin-left: 5px;">Native iPad</b></p>
+                        <p><b style="font-weight: bold; margin-left: 5px;">Desktop App</b></p>
+                        <p><b style="font-weight: bold; margin-left: 5px;">iOS / Android</b></p>
+                        <p><b style="font-weight: bold; margin-left: 5px;">Native iPad</b></p>
                     </div>
                 </div>
                 <div class="protfolio-img">
@@ -87,6 +85,9 @@ const router = useRouter();
 }
 .text p{
     max-width: 600px;
+    color: grey; 
+    font-size: 16px; 
+    text-align: center;
 }
 .security-lest{
     display: flex;
@@ -103,6 +104,11 @@ const router = useRouter();
 .lest p{
     max-width: 450px;
     font-size: 14px;
+}
+.titile h2{
+    font-weight: bold;
+    color: white; 
+    font-size: 45px;
 }
 .protfolio{
     display: flex;
@@ -202,6 +208,73 @@ const router = useRouter();
         display: flex;
         flex-direction: column;
         gap: 1rem;
+    }
+}
+@media(max-width:480px){
+    .fortress{
+        padding: 3rem 1rem;
+    }
+    .titile{
+        text-align: center;
+        align-items: center;
+    }
+    .titile h2{
+        font-size: 25px;
+    }
+    .text p{
+        max-width: 300px;
+    }
+    .protfolio-text h1{
+        font-size: 34px;
+    }
+    .security-lest{
+        flex-direction: column;
+        gap: 2rem;
+    }
+    .text p{
+        font-size: 13px;
+        max-width: 400px;
+    }
+    .protfolio{
+        padding: 1rem;
+    }
+    .Experience-buton{
+        gap: 1rem;
+        align-items: center;
+    }
+
+}
+@media(max-width:360px){
+    .fortress{
+        padding: 3rem 1rem;
+    }
+    .titile{
+        text-align: center;
+        align-items: center;
+    }
+    .titile h2{
+        font-size: 25px;
+    }
+    .text p{
+        max-width: 300px;
+    }
+    .protfolio-text h1{
+        font-size: 34px;
+    }
+    .security-lest{
+        flex-direction: column;
+        gap: 2rem;
+    }
+    .text p{
+        font-size: 13px;
+        max-width: 400px;
+    }
+    .protfolio{
+        padding: 1rem;
+    }
+    .Experience-buton{
+        gap: 1rem;
+        align-items: center;
     }
 }
 </style>

@@ -71,4 +71,11 @@ const route=useRouter()
     }
  
 }
+@media(max-width: 360px){
+    .the-Ledger{
+        padding:10px 0px;
+    }
+    
+}
+
 </style>
