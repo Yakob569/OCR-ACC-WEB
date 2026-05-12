@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { decodeBase64Json } from '@/lib/encoding'
-import { getImage, getImageResult, retryImage, submitImageReview } from '@/api/ledgerApi'
+import { getImage, getImageResult, getImageReview, retryImage, submitImageReview } from '@/api/ledgerApi'
 import OcrFieldCard from '@/components/OcrFieldCard.vue'
 
 const route = useRoute()
@@ -28,6 +28,8 @@ const reviewSuccess = ref('')
 
 const qualityLabel = ref('good')
 const isAccepted = ref(true)
+const typesOfPurchase = ref('5')
+const unitOfMeasurement = ref('')
 const correctedFieldsJson = ref('{}')
 const reviewNotes = ref('')
 
@@ -94,6 +96,23 @@ async function load() {
     decodedRawText.value = res?.raw_text || ''
     decodedItems.value = decodeBase64Json(res?.items_json) || []
     decodedWarnings.value = decodeBase64Json(res?.warnings_json) || []
+
+    // Fetch review data if already reviewed
+    console.log('Image review status:', image.value?.review_status)
+    if (image.value?.review_status !== 'pending') {
+      try {
+        const review = await getImageReview(imageId)
+        console.log('Fetched review data:', review)
+        if (review && review.corrected_fields_json) {
+           const corrected = decodeBase64Json(review.corrected_fields_json) || {}
+           console.log('Parsed corrected fields:', corrected)
+           typesOfPurchase.value = corrected.types_of_purchase || '5'
+           unitOfMeasurement.value = corrected.unit_of_measurement || ''
+        }
+      } catch (err) {
+        console.error('Failed to fetch review data:', err)
+      }
+    }
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : 'Failed to load image'
     image.value = null
@@ -137,8 +156,11 @@ async function onSubmitReview() {
   reviewSuccess.value = ''
   isSubmittingReview.value = true
   try {
-    const correctedFields = safeParseCorrectedFields()
-    if (correctedFields === null) throw new Error('Corrected fields must be valid JSON object')
+    const correctedFields = {
+      types_of_purchase: typesOfPurchase.value,
+      unit_of_measurement: unitOfMeasurement.value
+    }
+    
     await submitImageReview(imageId, {
       qualityLabel: qualityLabel.value,
       isAccepted: isAccepted.value,
@@ -274,9 +296,9 @@ onMounted(load)
           <div class="formRow">
             <label class="label">Quality</label>
             <select v-model="qualityLabel" class="input">
-              <option value="good">good</option>
-              <option value="ok">ok</option>
-              <option value="bad">bad</option>
+              <option value="accurate">Accurate</option>
+              <option value="partially_accurate">Partially Accurate</option>
+              <option value="inaccurate">Inaccurate</option>
             </select>
           </div>
 
@@ -289,8 +311,14 @@ onMounted(load)
           </div>
 
           <div class="formRow">
-            <label class="label">Corrected fields (JSON)</label>
-            <textarea v-model="correctedFieldsJson" class="textarea" rows="4" spellcheck="false"></textarea>
+            <label class="label">Types of purchase</label>
+            <select v-model="typesOfPurchase" class="input">
+              <option v-for="i in 6" :key="i" :value="String(i)">{{ i }}</option>
+            </select>
+          </div>
+          <div class="formRow">
+            <label class="label">Unit of measurement</label>
+            <input v-model="unitOfMeasurement" class="input" placeholder="e.g., kg, liters" />
           </div>
 
           <div class="formRow">

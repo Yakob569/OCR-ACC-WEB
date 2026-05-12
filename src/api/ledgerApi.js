@@ -111,6 +111,12 @@ export async function getImage(imageId) {
   return data.data
 }
 
+export async function getImageReview(imageId) {
+  const response = await authedFetch(`/api/v1/images/${imageId}/review`, { method: 'GET' })
+  const data = await okJson(response, 'Failed to load image review')
+  return data.data
+}
+
 export async function getImageResult(imageId) {
   const response = await authedFetch(`/api/v1/images/${imageId}/result`, { method: 'GET' })
   const data = await okJson(response, 'Failed to load image result')
@@ -137,4 +143,3 @@ export async function retryImage(imageId) {
   const data = await okJson(response, 'Failed to retry image')
   return data.data
 }
-
