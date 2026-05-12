@@ -122,11 +122,16 @@ onMounted(loadFirstPage)
       <p v-else-if="filteredGroups.length === 0" class="muted">No groups found.</p>
 
       <ul v-else class="list">
-        <li v-for="group in filteredGroups" :key="group.id" class="row">
+        <li 
+          v-for="group in filteredGroups" 
+          :key="group.id" 
+          class="row clickable-row" 
+          @click="router.push(`/app/groups/${group.id}`)"
+        >
           <div class="name">{{ group.name }}</div>
           <div class="desc">{{ group.description || '—' }}</div>
           <div class="pill">{{ group.status }}</div>
-          <button class="smallLink" @click="router.push(`/app/groups/${group.id}`)">Open</button>
+          <div class="chevron">󰅂</div>
         </li>
       </ul>
 
@@ -275,6 +280,19 @@ h3 {
   padding: 12px;
   border-radius: 12px;
   background: #f8f9fa;
+  transition: all 0.2s ease;
+}
+
+.clickable-row {
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.clickable-row:hover {
+  background: #ffffff;
+  border-color: rgba(0, 91, 81, 0.2);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .name {
@@ -289,6 +307,13 @@ h3 {
   font-size: 13px;
 }
 
+.chevron {
+  color: #005b51;
+  font-size: 16px;
+  opacity: 0.5;
+  font-weight: 900;
+}
+
 .pill {
   padding: 6px 8px;
   border-radius: 999px;
@@ -298,15 +323,6 @@ h3 {
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-}
-
-.smallLink {
-  border: none;
-  background: transparent;
-  color: #005b51;
-  font-weight: 900;
-  cursor: pointer;
-  font-size: 12px;
 }
 
 .footer {
@@ -325,6 +341,9 @@ h3 {
   }
   .row {
     grid-template-columns: 1fr;
+  }
+  .clickable-row:hover {
+    transform: none;
   }
 }
 </style>

@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getGroup, listGroupExports, listGroupImages, listGroupResults, uploadGroupImages } from '@/api/ledgerApi'
+import { getGroup, listGroupImages, uploadGroupImages } from '@/api/ledgerApi'
 import { decodeBase64Json } from '@/lib/encoding'
 
 const router = useRouter()
@@ -10,8 +10,6 @@ const groupId = computed(() => route.params.groupId)
 
 const group = ref(null)
 const images = ref([])
-const results = ref([])
-const exportsList = ref([])
 
 const isLoading = ref(false)
 const isUploading = ref(false)
@@ -24,22 +22,16 @@ async function load() {
   errorMessage.value = ''
   isLoading.value = true
   try {
-    const [g, imgs, res, exps] = await Promise.all([
+    const [g, imgs] = await Promise.all([
       getGroup(groupId.value),
       listGroupImages(groupId.value, { limit: 50, offset: 0 }),
-      listGroupResults(groupId.value, { limit: 50, offset: 0 }),
-      listGroupExports(groupId.value, { limit: 50, offset: 0 }),
     ])
     group.value = g
     images.value = Array.isArray(imgs) ? imgs : []
-    results.value = Array.isArray(res) ? res : []
-    exportsList.value = Array.isArray(exps) ? exps : []
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : 'Failed to load group'
     group.value = null
     images.value = []
-    results.value = []
-    exportsList.value = []
   } finally {
     isLoading.value = false
   }
@@ -48,6 +40,13 @@ async function load() {
 function onFilesChanged(event) {
   const fileList = event?.target?.files
   selectedFiles.value = fileList ? Array.from(fileList) : []
+}
+
+function onDrop(event) {
+  const fileList = event?.dataTransfer?.files
+  if (fileList) {
+    selectedFiles.value = Array.from(fileList).filter(f => f.type.startsWith('image/'))
+  }
 }
 
 async function onUpload() {
@@ -70,19 +69,6 @@ function statusLabel(img) {
   if (img.ocr_status) return img.ocr_status
   if (img.upload_status) return img.upload_status
   return 'unknown'
-}
-
-function getResultImageId(r) {
-  return r?.receipt_image_id || r?.receiptImageId || r?.image_id || r?.imageId || ''
-}
-
-function previewFields(r) {
-  const decoded = decodeBase64Json(r?.fields_json)
-  if (!decoded || typeof decoded !== 'object' || Array.isArray(decoded)) return null
-  const merchant = decoded.merchant || decoded.merchant_name || decoded.vendor || decoded.store
-  const date = decoded.date || decoded.transaction_date
-  const total = decoded.total || decoded.amount_total || decoded.grand_total
-  return { merchant, date, total }
 }
 
 onMounted(load)
@@ -130,24 +116,55 @@ onMounted(load)
       </div>
 
       <div class="upload">
-        <h3>Upload receipts</h3>
-        <p class="muted">Select multiple images. They will be uploaded under form-data key <b>`files`</b>.</p>
+        <div class="uploadHeader">
+          <h3>Upload receipts</h3>
+          <button class="secondary small" @click="router.push(`/app/exports?groupId=${group.id}`)">Manage Exports</button>
+        </div>
+        
         <p v-if="uploadError" class="error">{{ uploadError }}</p>
 
-        <input class="file" type="file" accept="image/*" multiple @change="onFilesChanged" />
-
-        <div v-if="selectedFiles.length" class="selected">
-          <div class="selectedTitle">Selected ({{ selectedFiles.length }})</div>
-          <ul class="selectedList">
-            <li v-for="f in selectedFiles" :key="f.name">{{ f.name }}</li>
-          </ul>
+        <div 
+          class="dropzone" 
+          :class="{ 'has-files': selectedFiles.length > 0 }"
+          @click="$refs.fileInput.click()"
+          @dragover.prevent
+          @drop.prevent="onDrop"
+        >
+          <input 
+            ref="fileInput"
+            class="hidden-file-input" 
+            type="file" 
+            accept="image/*" 
+            multiple 
+            @change="onFilesChanged" 
+          />
+          
+          <div v-if="selectedFiles.length === 0" class="drop-prompt">
+            <div class="icon">󰄵</div>
+            <div class="text">Click or drag images here to upload</div>
+            <div class="sub">PNG, JPG, WEBP supported</div>
+          </div>
+          
+          <div v-else class="selected-files-preview">
+            <div class="preview-header">
+              <span>{{ selectedFiles.length }} files selected</span>
+              <button class="clear-btn" @click.stop="selectedFiles = []">Clear</button>
+            </div>
+            <ul class="file-list">
+              <li v-for="f in selectedFiles.slice(0, 5)" :key="f.name" class="file-item">
+                <span class="file-name">{{ f.name }}</span>
+                <span class="file-size">{{ (f.size / 1024).toFixed(0) }} KB</span>
+              </li>
+              <li v-if="selectedFiles.length > 5" class="file-more">
+                and {{ selectedFiles.length - 5 }} more...
+              </li>
+            </ul>
+          </div>
         </div>
 
         <button class="primary" :disabled="isUploading || selectedFiles.length === 0" @click="onUpload">
-          {{ isUploading ? 'Uploading…' : 'Upload' }}
+          {{ isUploading ? 'Uploading…' : 'Start Upload' }}
         </button>
-
-        <button class="secondary" @click="router.push(`/app/exports?groupId=${group.id}`)">Create export</button>
       </div>
 
       <div class="images">
@@ -159,60 +176,16 @@ onMounted(load)
         <p v-if="images.length === 0" class="muted">No images uploaded yet.</p>
 
         <ul v-else class="list">
-          <li v-for="img in images" :key="img.id" class="row">
+          <li 
+            v-for="img in images" 
+            :key="img.id" 
+            class="row clickable-row" 
+            @click="router.push(`/app/images/${img.id}`)"
+          >
             <div class="name">{{ img.original_filename || img.id }}</div>
             <div class="pill">{{ statusLabel(img) }}</div>
             <div class="pill">{{ img.review_status || '—' }}</div>
-            <button class="smallLink" @click="router.push(`/app/images/${img.id}`)">Open</button>
-          </li>
-        </ul>
-      </div>
-
-      <div class="results">
-        <div class="imagesHeader">
-          <h3>Results</h3>
-          <div class="muted">{{ results.length }} loaded</div>
-        </div>
-
-        <p v-if="results.length === 0" class="muted">No results yet.</p>
-
-        <ul v-else class="list">
-          <li v-for="r in results" :key="r.id" class="row rowWide">
-            <div class="name">{{ getResultImageId(r) || r.id }}</div>
-            <div class="pill">{{ r.success ? 'success' : 'failed' }}</div>
-            <div class="desc" v-if="previewFields(r)">
-              {{ previewFields(r).merchant || '—' }} · {{ previewFields(r).date || '—' }} ·
-              {{ previewFields(r).total || '—' }}
-            </div>
-            <div class="desc" v-else>—</div>
-            <button
-              class="smallLink"
-              :disabled="!getResultImageId(r)"
-              @click="router.push(`/app/images/${getResultImageId(r)}`)"
-            >
-              Open
-            </button>
-          </li>
-        </ul>
-      </div>
-
-      <div class="exports">
-        <div class="imagesHeader">
-          <h3>Exports</h3>
-          <div class="muted">{{ exportsList.length }} loaded</div>
-        </div>
-
-        <p v-if="exportsList.length === 0" class="muted">No exports yet.</p>
-
-        <ul v-else class="list">
-          <li v-for="exp in exportsList" :key="exp.id" class="row rowWide">
-            <div class="name">{{ exp.format || 'csv' }}</div>
-            <div class="pill">{{ exp.row_count ?? '—' }} rows</div>
-            <div class="desc">{{ exp.created_at || '' }}</div>
-            <a v-if="exp.storage_url" class="smallLink" :href="exp.storage_url" target="_blank" rel="noreferrer"
-              >Download</a
-            >
-            <span v-else class="pill">Not ready</span>
+            <div class="chevron">󰅂</div>
           </li>
         </ul>
       </div>
@@ -280,9 +253,7 @@ h3 {
 
 .stats,
 .upload,
-.images,
-.results,
-.exports {
+.images {
   padding: 14px;
   border-radius: 12px;
   background: #ffffff;
@@ -331,33 +302,124 @@ h3 {
   letter-spacing: 0.06em;
 }
 
-.file {
-  margin-top: 12px;
+.uploadHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
-.selected {
-  margin-top: 12px;
-  padding: 12px;
+.dropzone {
+  border: 2px dashed rgba(190, 201, 200, 0.6);
   border-radius: 12px;
+  padding: 30px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
   background: #f8f9fa;
+  margin-bottom: 16px;
 }
 
-.selectedTitle {
-  font-weight: 900;
+.dropzone:hover {
+  border-color: #005b51;
+  background: rgba(0, 91, 81, 0.02);
+}
+
+.dropzone.has-files {
+  border-style: solid;
+  border-color: rgba(0, 91, 81, 0.3);
+  background: #ffffff;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.drop-prompt .icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+  color: #005b51;
+  opacity: 0.5;
+}
+
+.drop-prompt .text {
+  font-weight: 800;
   color: #191c1d;
-  font-size: 13px;
+  font-size: 14px;
 }
 
-.selectedList {
-  margin: 8px 0 0;
-  padding-left: 18px;
+.drop-prompt .sub {
+  font-size: 11px;
   color: #51606d;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.selected-files-preview {
+  text-align: left;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #005b51;
+}
+
+.clear-btn {
+  background: none;
+  border: none;
+  color: #ba1a1a;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.file-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  background: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.file-name {
   font-weight: 700;
-  font-size: 13px;
+  color: #191c1d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70%;
+}
+
+.file-size {
+  color: #51606d;
+  font-weight: 600;
+}
+
+.file-more {
+  font-size: 11px;
+  color: #51606d;
+  font-style: italic;
+  margin-top: 4px;
+  padding-left: 4px;
 }
 
 .primary {
-  margin-top: 12px;
   width: 100%;
   padding: 12px 12px;
   border-radius: 10px;
@@ -366,18 +428,28 @@ h3 {
   background: linear-gradient(135deg, #005148, #006b5f);
   font-weight: 900;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 81, 72, 0.2);
+}
+
+.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .secondary {
-  margin-top: 10px;
-  width: 100%;
-  padding: 12px 12px;
+  padding: 10px 16px;
   border-radius: 10px;
   border: none;
   background: rgba(81, 96, 109, 0.1);
   color: #51606d;
   font-weight: 900;
   cursor: pointer;
+}
+
+.secondary.small {
+  padding: 6px 10px;
+  font-size: 11px;
 }
 
 .imagesHeader {
@@ -405,6 +477,19 @@ h3 {
   padding: 12px;
   border-radius: 12px;
   background: #f8f9fa;
+  transition: all 0.2s ease;
+}
+
+.clickable-row {
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.clickable-row:hover {
+  background: #ffffff;
+  border-color: rgba(0, 91, 81, 0.2);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .name {
@@ -413,24 +498,11 @@ h3 {
   font-size: 13px;
 }
 
-.desc {
-  font-weight: 800;
-  color: #51606d;
-  font-size: 13px;
-  word-break: break-word;
-}
-
-.rowWide {
-  grid-template-columns: 1fr auto 1.3fr auto;
-}
-
-.smallLink {
-  border: none;
-  background: transparent;
+.chevron {
   color: #005b51;
+  font-size: 16px;
+  opacity: 0.5;
   font-weight: 900;
-  cursor: pointer;
-  font-size: 12px;
 }
 
 @media (max-width: 900px) {
@@ -440,6 +512,9 @@ h3 {
   .row {
     grid-template-columns: 1fr;
     align-items: start;
+  }
+  .clickable-row:hover {
+    transform: none;
   }
 }
 </style>

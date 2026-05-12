@@ -84,10 +84,15 @@ onMounted(load)
           No groups yet. Create your first group to start scanning receipts.
         </div>
         <ul v-else class="list">
-          <li v-for="group in recentGroups" :key="group.id" class="row">
+          <li 
+            v-for="group in recentGroups" 
+            :key="group.id" 
+            class="row clickable-row" 
+            @click="router.push(`/app/groups/${group.id}`)"
+          >
             <div class="name">{{ group.name }}</div>
             <div class="pill">{{ group.status }}</div>
-            <button class="smallLink" @click="router.push(`/app/groups/${group.id}`)">Open</button>
+            <div class="chevron">󰅂</div>
           </li>
         </ul>
       </div>
@@ -100,10 +105,15 @@ onMounted(load)
           No recent uploads.
         </div>
         <ul v-else class="list">
-          <li v-for="img in summary.recent_images" :key="img.id" class="row">
+          <li 
+            v-for="img in summary.recent_images" 
+            :key="img.id" 
+            class="row clickable-row" 
+            @click="router.push(`/app/images/${img.id}`)"
+          >
             <div class="name">{{ img.original_filename || img.id }}</div>
             <div class="pill">{{ img.ocr_status }}</div>
-            <button class="smallLink" @click="router.push(`/app/images/${img.id}`)">Open</button>
+            <div class="chevron">󰅂</div>
           </li>
         </ul>
       </div>
@@ -209,12 +219,32 @@ h3 {
   padding: 10px 12px;
   border-radius: 10px;
   background: #f8f9fa;
+  transition: all 0.2s ease;
+}
+
+.clickable-row {
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.clickable-row:hover {
+  background: #ffffff;
+  border-color: rgba(0, 91, 81, 0.2);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .name {
   font-weight: 800;
   color: #191c1d;
   font-size: 13px;
+}
+
+.chevron {
+  color: #005b51;
+  font-size: 16px;
+  opacity: 0.5;
+  font-weight: 900;
 }
 
 .pill {
@@ -234,15 +264,6 @@ h3 {
   color: #005b51;
   font-weight: 900;
   cursor: pointer;
-}
-
-.smallLink {
-  border: none;
-  background: transparent;
-  color: #005b51;
-  font-weight: 900;
-  cursor: pointer;
-  font-size: 12px;
 }
 
 .muted {
@@ -269,6 +290,9 @@ h3 {
   .row {
     grid-template-columns: 1fr;
     align-items: start;
+  }
+  .clickable-row:hover {
+    transform: none;
   }
 }
 </style>
