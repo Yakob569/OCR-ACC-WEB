@@ -1,4 +1,4 @@
-const DEFAULT_API_BASE_URL = 'http://localhost:8080'
+const DEFAULT_API_BASE_URL = 'https://ocr-acc-user-module.onrender.com'
 
 function normalizeBaseUrl(value) {
   const raw = (value || '').trim()
