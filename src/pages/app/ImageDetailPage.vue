@@ -318,7 +318,18 @@ onMounted(load)
           </div>
           <div class="formRow">
             <label class="label">Unit of measurement</label>
-            <input v-model="unitOfMeasurement" class="input" placeholder="e.g., kg, liters" />
+            <select v-model="unitOfMeasurement" class="input">
+              <option value="">Select unit</option>
+              <option value="2">KG</option>
+              <option value="3">ML</option>
+              <option value="4">GM</option>
+              <option value="5">LIT</option>
+              <option value="6">MT</option>
+              <option value="7">PCS</option>
+              <option value="8">CT</option>
+              <option value="9">OTHER</option>
+              <option value="10">PC</option>
+            </select>
           </div>
 
           <div class="formRow">
