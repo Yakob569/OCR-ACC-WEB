@@ -143,3 +143,17 @@ export async function retryImage(imageId) {
   const data = await okJson(response, 'Failed to retry image')
   return data.data
 }
+
+export async function deleteGroup(groupId) {
+  const response = await authedFetch(`/api/v1/groups/${groupId}`, { method: 'DELETE' })
+  const data = await okJson(response, 'Failed to delete group')
+  return data.data
+}
+
+export async function deleteImage(imageId) {
+  const response = await authedFetch(`/api/v1/images/${imageId}`, { method: 'DELETE' })
+  const data = await okJson(response, 'Failed to delete image')
+  return data.data
+}
+
+

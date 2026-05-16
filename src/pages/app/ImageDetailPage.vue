@@ -230,7 +230,7 @@ onMounted(load)
       </div>
 
       <div class="column">
-        <div class="panel">
+        <div class="panel" v-if="false">
           <h3>OCR fields</h3>
           <p v-if="fieldsWithConfidence.length === 0" class="muted">No fields yet.</p>
           <div v-else class="ocrGrid">
@@ -244,7 +244,7 @@ onMounted(load)
           </div>
         </div>
 
-        <div class="panel" style="margin-top: 14px;">
+        <div class="panel" style="margin-top: 14px;" v-if="false">
           <h3>Raw Text</h3>
           <p v-if="!decodedRawText" class="muted">No raw text extracted.</p>
           <div v-else class="rawText">
@@ -252,7 +252,7 @@ onMounted(load)
           </div>
         </div>
 
-        <div class="panel" style="margin-top: 14px;">
+        <div class="panel" style="margin-top: 14px;" v-if="false">
           <h3>Warnings</h3>
           <p v-if="!decodedWarnings || decodedWarnings.length === 0" class="muted">No warnings.</p>
           <ul v-else class="warn">

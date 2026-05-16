@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getGroup, listGroupImages, uploadGroupImages } from '@/api/ledgerApi'
+import { getGroup, listGroupImages, uploadGroupImages, deleteImage } from '@/api/ledgerApi'
 import { decodeBase64Json } from '@/lib/encoding'
 
 const router = useRouter()
@@ -34,6 +34,17 @@ async function load() {
     images.value = []
   } finally {
     isLoading.value = false
+  }
+}
+
+async function handleDeleteImage(event, image) {
+  event.stopPropagation()
+  if (!confirm(`Are you sure you want to delete the image "${image.original_filename || image.id}"?`)) return
+  try {
+    await deleteImage(image.id)
+    await load()
+  } catch (err) {
+    alert(err.message || 'Failed to delete image')
   }
 }
 
@@ -185,6 +196,7 @@ onMounted(load)
             <div class="name">{{ img.original_filename || img.id }}</div>
             <div class="pill">{{ statusLabel(img) }}</div>
             <div class="pill">{{ img.review_status || '—' }}</div>
+            <button class="deleteBtn" @click="handleDeleteImage($event, img)">🗑</button>
             <div class="chevron">󰅂</div>
           </li>
         </ul>
@@ -471,13 +483,28 @@ h3 {
 
 .row {
   display: grid;
-  grid-template-columns: 1fr auto auto auto;
+  grid-template-columns: 1fr auto auto auto auto;
   align-items: center;
   gap: 10px;
   padding: 12px;
   border-radius: 12px;
   background: #f8f9fa;
   transition: all 0.2s ease;
+}
+
+.deleteBtn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: #ba1a1a;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.deleteBtn:hover {
+  background: rgba(186, 26, 26, 0.1);
 }
 
 .clickable-row {
