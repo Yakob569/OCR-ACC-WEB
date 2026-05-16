@@ -109,7 +109,7 @@ onMounted(load)
         </ul>
       </div>
 
-      <div class="panel">
+      <div class="panel" v-if="false">
         <div class="panelHeader">
           <h3>Recent Images</h3>
         </div>
