@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { createGroup, listGroups } from '@/api/ledgerApi'
+import { createGroup, listGroups, deleteGroup } from '@/api/ledgerApi'
 
 const router = useRouter()
 
@@ -82,6 +82,17 @@ async function onCreate() {
   }
 }
 
+async function handleDeleteGroup(event, group) {
+  event.stopPropagation()
+  if (!confirm(`Are you sure you want to delete the group "${group.name}"?`)) return
+  try {
+    await deleteGroup(group.id)
+    await loadFirstPage()
+  } catch (err) {
+    alert(err.message || 'Failed to delete group')
+  }
+}
+
 onMounted(loadFirstPage)
 </script>
 
@@ -131,6 +142,7 @@ onMounted(loadFirstPage)
           <div class="name">{{ group.name }}</div>
           <div class="desc">{{ group.description || '—' }}</div>
           <div class="pill">{{ group.status }}</div>
+          <button class="deleteBtn" @click="handleDeleteGroup($event, group)">🗑</button>
           <div class="chevron">󰅂</div>
         </li>
       </ul>
@@ -274,13 +286,28 @@ h3 {
 
 .row {
   display: grid;
-  grid-template-columns: 1.1fr 1.4fr auto auto;
+  grid-template-columns: 1.1fr 1.4fr auto auto auto;
   align-items: center;
   gap: 10px;
   padding: 12px;
   border-radius: 12px;
   background: #f8f9fa;
   transition: all 0.2s ease;
+}
+
+.deleteBtn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: #ba1a1a;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.deleteBtn:hover {
+  background: rgba(186, 26, 26, 0.1);
 }
 
 .clickable-row {

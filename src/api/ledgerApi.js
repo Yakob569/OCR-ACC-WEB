@@ -53,9 +53,18 @@ export async function getGroup(groupId) {
   return data.data
 }
 
-export async function uploadGroupImages(groupId, files) {
+export async function uploadGroupImages(groupId, stagedFiles) {
   const form = new FormData()
-  for (const file of files) form.append('files', file)
+  const metadata = []
+  for (const sf of stagedFiles) {
+    form.append('files', sf.file)
+    metadata.push({
+      filename: sf.file.name,
+      types_of_purchase: sf.typesOfPurchase,
+      unit_of_measurement: sf.unitOfMeasurement
+    })
+  }
+  form.append('metadata', JSON.stringify(metadata))
 
   const response = await authedFetch(`/api/v1/groups/${groupId}/images`, {
     method: 'POST',

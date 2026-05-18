@@ -8,6 +8,7 @@ const route = useRoute()
 const profile = useProfile()
 const isLoadingProfile = ref(false)
 const profileError = ref('')
+const isSidebarOpen = ref(true)
 
 async function onLogout() {
   await logout()
@@ -28,7 +29,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="shell">
+  <div class="shell" :class="{ 'sidebar-closed': !isSidebarOpen }">
     <aside class="nav">
       <div class="brand">
         <div class="logo">The Ledger</div>
@@ -39,7 +40,7 @@ onMounted(async () => {
         <router-link class="link" to="/app/dashboard">Dashboard</router-link>
         <router-link class="link" to="/app/groups">Groups</router-link>
         <router-link class="link" to="/app/exports">Exports</router-link>
-        <router-link class="link" to="/app/settings">Settings</router-link>
+        <!-- <router-link class="link" to="/app/settings">Settings</router-link> -->
       </nav>
 
       <div class="user">
@@ -58,7 +59,10 @@ onMounted(async () => {
 
     <main class="content">
       <header class="topbar">
-        <div class="title">{{ route.name || 'App' }}</div>
+        <div class="topbar-left">
+          <button class="menu-toggle" @click="isSidebarOpen = !isSidebarOpen">☰</button>
+          <div class="title">{{ route.name || 'App' }}</div>
+        </div>
         <router-link v-if="route.path === '/app/groups'" class="new-group" to="/app/groups">New Group</router-link>
       </header>
 
@@ -75,6 +79,11 @@ onMounted(async () => {
   grid-template-columns: 260px 1fr;
   min-height: 100vh;
   background: #f8f9fa;
+  transition: grid-template-columns 0.3s ease;
+}
+
+.shell.sidebar-closed {
+  grid-template-columns: 0px 1fr;
 }
 
 .nav {
@@ -84,6 +93,15 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: padding 0.3s ease, opacity 0.3s ease;
+}
+
+.shell.sidebar-closed .nav {
+  padding-left: 0;
+  padding-right: 0;
+  opacity: 0;
 }
 
 .brand .logo {
@@ -166,6 +184,30 @@ onMounted(async () => {
   margin-bottom: 20px;
 }
 
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.menu-toggle {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #191c1d;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.menu-toggle:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
 .title {
   font-size: 20px;
   font-weight: 900;
@@ -194,10 +236,20 @@ onMounted(async () => {
   .shell {
     grid-template-columns: 1fr;
   }
+  .shell.sidebar-closed {
+    grid-template-columns: 1fr;
+  }
+  .shell.sidebar-closed .nav {
+    display: none;
+  }
   .nav {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    padding: 24px;
+    opacity: 1;
+    overflow: visible;
+    white-space: normal;
   }
   .links {
     flex-direction: row;

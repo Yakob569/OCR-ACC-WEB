@@ -17,6 +17,26 @@ const errorMessage = ref('')
 const uploadError = ref('')
 
 const selectedFiles = ref([])
+const activeStagedFileId = ref(null)
+
+const activeStagedFile = computed(() => {
+  return selectedFiles.value.find(sf => sf.id === activeStagedFileId.value) || null
+})
+
+function clearSelectedFiles() {
+  selectedFiles.value = []
+  activeStagedFileId.value = null
+}
+
+function removeStagedFile(id) {
+  const index = selectedFiles.value.findIndex(sf => sf.id === id)
+  if (index !== -1) {
+    selectedFiles.value.splice(index, 1)
+    if (activeStagedFileId.value === id) {
+      activeStagedFileId.value = selectedFiles.value[0]?.id || null
+    }
+  }
+}
 
 async function load() {
   errorMessage.value = ''
@@ -50,13 +70,38 @@ async function handleDeleteImage(event, image) {
 
 function onFilesChanged(event) {
   const fileList = event?.target?.files
-  selectedFiles.value = fileList ? Array.from(fileList) : []
+  if (fileList && fileList.length > 0) {
+    const newFiles = Array.from(fileList).map(file => ({
+      id: Math.random().toString(36).substr(2, 9),
+      file: file,
+      typesOfPurchase: '5',
+      unitOfMeasurement: ''
+    }))
+    const wasEmpty = selectedFiles.value.length === 0
+    selectedFiles.value = [...selectedFiles.value, ...newFiles]
+    if (wasEmpty) {
+      activeStagedFileId.value = newFiles[0].id
+    }
+  }
 }
 
 function onDrop(event) {
   const fileList = event?.dataTransfer?.files
-  if (fileList) {
-    selectedFiles.value = Array.from(fileList).filter(f => f.type.startsWith('image/'))
+  if (fileList && fileList.length > 0) {
+    const imageFiles = Array.from(fileList).filter(f => f.type.startsWith('image/'))
+    if (imageFiles.length > 0) {
+      const newFiles = imageFiles.map(file => ({
+        id: Math.random().toString(36).substr(2, 9),
+        file: file,
+        typesOfPurchase: '5',
+        unitOfMeasurement: ''
+      }))
+      const wasEmpty = selectedFiles.value.length === 0
+      selectedFiles.value = [...selectedFiles.value, ...newFiles]
+      if (wasEmpty) {
+        activeStagedFileId.value = newFiles[0].id
+      }
+    }
   }
 }
 
@@ -66,7 +111,7 @@ async function onUpload() {
   isUploading.value = true
   try {
     await uploadGroupImages(groupId.value, selectedFiles.value)
-    selectedFiles.value = []
+    clearSelectedFiles()
     await load()
   } catch (error) {
     uploadError.value = error instanceof Error ? error.message : 'Upload failed'
@@ -134,48 +179,87 @@ onMounted(load)
         
         <p v-if="uploadError" class="error">{{ uploadError }}</p>
 
-        <div 
-          class="dropzone" 
-          :class="{ 'has-files': selectedFiles.length > 0 }"
-          @click="$refs.fileInput.click()"
-          @dragover.prevent
-          @drop.prevent="onDrop"
-        >
-          <input 
-            ref="fileInput"
-            class="hidden-file-input" 
-            type="file" 
-            accept="image/*" 
-            multiple 
-            @change="onFilesChanged" 
-          />
-          
-          <div v-if="selectedFiles.length === 0" class="drop-prompt">
-            <div class="icon">󰄵</div>
-            <div class="text">Click or drag images here to upload</div>
-            <div class="sub">PNG, JPG, WEBP supported</div>
-          </div>
-          
-          <div v-else class="selected-files-preview">
-            <div class="preview-header">
-              <span>{{ selectedFiles.length }} files selected</span>
-              <button class="clear-btn" @click.stop="selectedFiles = []">Clear</button>
+        <div class="upload-layout" :class="{ 'split': selectedFiles.length > 0 }">
+          <div class="upload-left">
+            <div 
+              class="dropzone" 
+              :class="{ 'has-files': selectedFiles.length > 0 }"
+              @click="$refs.fileInput.click()"
+              @dragover.prevent
+              @drop.prevent="onDrop"
+            >
+              <input 
+                ref="fileInput"
+                class="hidden-file-input" 
+                type="file" 
+                accept="image/*" 
+                multiple 
+                @change="onFilesChanged" 
+              />
+              
+              <div v-if="selectedFiles.length === 0" class="drop-prompt">
+                <div class="icon">󰄵</div>
+                <div class="text">Click or drag images here to upload</div>
+                <div class="sub">PNG, JPG, WEBP supported</div>
+              </div>
+              
+              <div v-else class="selected-files-preview" @click.stop>
+                <div class="preview-header">
+                  <span>{{ selectedFiles.length }} files selected</span>
+                  <button class="clear-btn" @click.stop="clearSelectedFiles">Clear</button>
+                </div>
+                <ul class="file-list">
+                  <li 
+                    v-for="sf in selectedFiles" 
+                    :key="sf.id" 
+                    class="file-item clickable-file"
+                    :class="{ 'active-file': sf.id === activeStagedFileId }"
+                    @click.stop="activeStagedFileId = sf.id"
+                  >
+                    <span class="file-name">{{ sf.file.name }}</span>
+                    <div class="file-actions">
+                      <span class="file-size">{{ (sf.file.size / 1024).toFixed(0) }} KB</span>
+                      <button class="remove-btn" title="Remove receipt" @click.stop="removeStagedFile(sf.id)">✕</button>
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </div>
-            <ul class="file-list">
-              <li v-for="f in selectedFiles.slice(0, 5)" :key="f.name" class="file-item">
-                <span class="file-name">{{ f.name }}</span>
-                <span class="file-size">{{ (f.size / 1024).toFixed(0) }} KB</span>
-              </li>
-              <li v-if="selectedFiles.length > 5" class="file-more">
-                and {{ selectedFiles.length - 5 }} more...
-              </li>
-            </ul>
+
+            <button class="primary" :disabled="isUploading || selectedFiles.length === 0" @click="onUpload">
+              {{ isUploading ? 'Uploading…' : 'Start Upload' }}
+            </button>
+          </div>
+
+          <div v-if="selectedFiles.length > 0 && activeStagedFile" class="upload-right">
+            <h4>Pre-Review Receipt</h4>
+            <div class="staged-filename">{{ activeStagedFile.file.name }}</div>
+
+            <div class="formRow">
+              <label class="label">Types of purchase</label>
+              <select v-model="activeStagedFile.typesOfPurchase" class="input">
+                <option v-for="i in 6" :key="i" :value="String(i)">{{ i }}</option>
+              </select>
+            </div>
+
+            <div class="formRow">
+              <label class="label">Unit of measurement</label>
+              <select v-model="activeStagedFile.unitOfMeasurement" class="input">
+                <option value="">Select unit</option>
+                <option value="2">KG</option>
+                <option value="3">ML</option>
+                <option value="4">GM</option>
+                <option value="5">LIT</option>
+                <option value="6">MT</option>
+                <option value="7">PCS</option>
+                <option value="8">CT</option>
+                <option value="9">OTHER</option>
+                <option value="10">PC</option>
+              </select>
+            </div>
+            <p class="helper-text">Click a file in the list on the left to set its values.</p>
           </div>
         </div>
-
-        <button class="primary" :disabled="isUploading || selectedFiles.length === 0" @click="onUpload">
-          {{ isUploading ? 'Uploading…' : 'Start Upload' }}
-        </button>
       </div>
 
       <div class="images">
@@ -398,6 +482,8 @@ h3 {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  max-height: 180px;
+  overflow-y: auto;
 }
 
 .file-item {
@@ -423,12 +509,104 @@ h3 {
   font-weight: 600;
 }
 
-.file-more {
+.clickable-file {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.clickable-file:hover {
+  background: rgba(0, 91, 81, 0.05);
+  border-color: rgba(0, 91, 81, 0.15);
+}
+
+.clickable-file.active-file {
+  background: rgba(0, 91, 81, 0.08);
+  border-color: rgba(0, 91, 81, 0.3);
+  font-weight: 800;
+}
+
+.upload-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.upload-layout.split {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.upload-left {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+}
+
+.upload-right {
+  flex: 1;
+  border-left: 1px solid rgba(190, 201, 200, 0.4);
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.upload-right h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 900;
+  color: #005b51;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.staged-filename {
+  font-size: 12px;
+  font-weight: 800;
+  color: #51606d;
+  word-break: break-all;
+  background: #f2f4f5;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.formRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.formRow .label {
+  font-size: 11px;
+  color: #51606d;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.formRow .input {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(190, 201, 200, 0.8);
+  background: #ffffff;
+  color: #191c1d;
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.formRow .input:focus {
+  border-color: #005b51;
+}
+
+.helper-text {
   font-size: 11px;
   color: #51606d;
   font-style: italic;
-  margin-top: 4px;
-  padding-left: 4px;
+  margin: 4px 0 0;
+  line-height: 1.4;
 }
 
 .primary {
@@ -533,6 +711,15 @@ h3 {
 }
 
 @media (max-width: 900px) {
+  .upload-layout.split {
+    flex-direction: column;
+  }
+  .upload-right {
+    border-left: none;
+    border-top: 1px solid rgba(190, 201, 200, 0.4);
+    padding-left: 0;
+    padding-top: 16px;
+  }
   .stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -543,5 +730,32 @@ h3 {
   .clickable-row:hover {
     transform: none;
   }
+}
+
+.file-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.remove-btn {
+  background: transparent;
+  border: none;
+  color: #ba1a1a;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+
+.remove-btn:hover {
+  background: rgba(186, 26, 26, 0.1);
+  opacity: 1;
 }
 </style>
