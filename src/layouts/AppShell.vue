@@ -40,7 +40,7 @@ onMounted(async () => {
         <router-link class="link" to="/app/dashboard">Dashboard</router-link>
         <router-link class="link" to="/app/groups">Groups</router-link>
         <router-link class="link" to="/app/exports">Exports</router-link>
-        <!-- <router-link class="link" to="/app/settings">Settings</router-link> -->
+        <router-link class="link" to="/app/settings">Settings</router-link>
       </nav>
 
       <div class="user">

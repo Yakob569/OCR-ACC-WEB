@@ -1,4 +1,5 @@
 import { authedFetch } from '@/stores/auth'
+import { apiFetch } from '@/lib/api'
 
 async function parseJson(response) {
   const text = await response.text()
@@ -165,4 +166,73 @@ export async function deleteImage(imageId) {
   return data.data
 }
 
+export async function listPricingPlans() {
+  const response = await apiFetch('/api/v1/plans')
+  if (!response.ok) {
+    throw new Error('Failed to load pricing plans')
+  }
+  return response.json()
+}
+
+export async function purchasePlan({ planId, paymentLink, paymentScreenshot }) {
+  if (paymentScreenshot instanceof File) {
+    const formData = new FormData()
+    formData.append('plan_id', planId)
+    formData.append('payment_link', paymentLink)
+    formData.append('payment_screenshot', paymentScreenshot)
+
+    const response = await authedFetch('/api/v1/subscriptions/purchase', {
+      method: 'POST',
+      body: formData
+    })
+    const data = await parseJson(response)
+    if (!response.ok || !data || data.status !== true) {
+      throw apiError(data, 'Failed to submit purchase request')
+    }
+    return data
+  }
+
+  const response = await authedFetch('/api/v1/subscriptions/purchase', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      plan_id: planId,
+      payment_link: paymentLink,
+      payment_screenshot: paymentScreenshot
+    })
+  })
+  const data = await parseJson(response)
+  if (!response.ok || !data || data.status !== true) {
+    throw apiError(data, 'Failed to submit purchase request')
+  }
+  return data
+}
+
+export async function listUserSubscriptionRequests() {
+  const response = await authedFetch('/api/v1/subscriptions/requests')
+  if (!response.ok) {
+    throw new Error('Failed to load subscription requests')
+  }
+  return response.json()
+}
+
+export async function getActiveSubscription() {
+  const response = await authedFetch('/api/v1/subscriptions/active')
+  if (response.status === 404) {
+    return null
+  }
+  if (!response.ok) {
+    throw new Error('Failed to load active subscription')
+  }
+  return response.json()
+}
+
+export async function listPaymentMethods() {
+  const response = await apiFetch('/api/v1/payment-methods')
+  if (!response.ok) {
+    throw new Error('Failed to load payment methods')
+  }
+  const data = await response.json()
+  return data.data
+}
 
